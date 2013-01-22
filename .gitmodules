@@ -1,0 +1,3 @@
+[submodule "tktltiki2"]
+	path = tktltiki2
+	url = git@github.com:UniversityHelsinkiTKTL/tktltiki2.git
