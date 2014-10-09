@@ -23,4 +23,12 @@ sekä OpenGL:ään.
 \section{Metaohjelmointi Haskellilla}
 \subsection{Template Haskell}
 
-Template Haskell~\cite{ThPaper} tuo Haskelliin käännösaikaiset metaohjelmointimahdollisuudet makrojen muodossa.
+Template Haskell~\cite{ThPaper} on GHC-kääntäjän toteuttama epävirallinen laajennos Haskell-kieleen,
+joka tarjoaa mahdollisuudet käännösaikaiseen metaohjelmointiin makrojen muodossa.
+
+Makrojärjestelmät voidaan karkeasti jakaa tekstuaalisiin makroihin sekä syntaktisiin makroihin.
+Tunnetuimpia esimerkkejä tekstuaalisista makroista on C-kielen esikääntäjä sekä erinäisten assemblereiden makrokielet,
+kun taas syntaktiset makrot ovat Lisp-kieliperheen tavaramerkki.
+Template Haskellin tarjoamat makrot lukeutuvat näistä kategorioista jälkimmäiseen:
+Template Haskell-makrot ovat tavallisia Haskell-funktioita,
+joilla on paluutyyppinä Template Haskell-kirjastossa määritelty syntaksipuutyyppi.
