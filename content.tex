@@ -32,3 +32,48 @@ kun taas syntaktiset makrot ovat Lisp-kieliperheen tavaramerkki.
 Template Haskellin tarjoamat makrot lukeutuvat näistä kategorioista jälkimmäiseen:
 Template Haskell-makrot ovat tavallisia Haskell-funktioita,
 joilla on paluutyyppinä Template Haskell-kirjastossa määritelty syntaksipuutyyppi.
+
+\subsection{Template Haskell-esimerkki}
+
+\begin{listing}[H]
+    \inputminted{haskell}{codes/compile-time-eval-example/THExample.hs}
+    \label{lst:example-definition}
+    \caption{\texttt{THExample.hs:} Esimerkki Template Haskell-makrosta}
+\end{listing}
+
+\begin{listing}[H]
+    \inputminted{haskell}{codes/compile-time-eval-example/Main.hs}
+    \label{lst:example-usage}
+    \caption{\texttt{Main.hs:} Esimerkki edeltävän makron käytöstä}
+\end{listing}
+
+Listauksessa \ref{lst:example-definition} määritellään makro \Haskell{compileTimeEval},
+jonka avulla voidaan tehdä laskutoimituksia käännösaikana.
+Huomattavaa on, että koko kyseinen moduuli on aivan standardia Haskell 2010-koodia,
+ja että \Haskell{compileTimeEval} on vain tavallinen Haskell-funktio,
+jonka paluutyyppinä sattuu olemaan \Haskell{Q Exp}.
+
+Listauksessa \ref{lst:example-usage} esitellään \Haskell{compileTimeEval}-makron käyttöä,
+määrittelemällä nimet \Haskell{foo} ja \Haskell{bar} sen avulla.
+Makron käyttö tapahtuu dollarimerkkisyntaksilla \Haskell{\$(\emph{lauseke})},
+jossa \emph{lauseke} voi olla mielivaltaista Haskell-koodia.
+Koska dollarisyntaksi ja Template Haskell itsessään ei kuulu Haskell 2010-standardiin,
+on moduulin alkuun täytynyt laittaa pragma \Haskell{\{-\# LANGUAGE TemplateHaskell \#-\}}
+Template Haskell-laajennoksen sallimiseksi.
+
+Kääntäessä \Haskell{Main.hs}-moduulia voidaan havaita,
+että \Haskell{\$(compileTimeEval ...)}-lausekkeiden arvot todella lasketaan käännösaikana:
+ensin useita sekunteja kuluu lukujen 1--10 000 000 summan laskemiseen,
+sitten käännös päättyy virheeseen,
+koska makroekspansion aikana jaettiin nollalla.
+Siis \Haskell{\$()}-rakenteen sisällä oleva lauseke suoritetaan käännösaikana,
+ja sen paluuarvona oleva syntaksipuu (tyyppiä \Haskell{Q Exp}) liitetään käännettävän moduulin
+syntaksipuuhun.
+Template Haskellin moduuli \Haskell{Language.Haskell.TH.Syntax} tarjoaa tyypit \Haskell{Exp},
+joka vastaa Haskellin lausekkeen syntaksipuun tyyppiä,
+sekä tyypin \Haskell{Q},
+joka on \Haskell{IO}-tyyppiin verrattavissa oleva monadityyppi.
+Moduulista \Haskell{Language.Haskell.TH.Lib} löytyvät apufunktiot \Haskell{litE :: Lit -> Q Exp}
+sekä \Haskell{litE :: Integer -> Lit},
+joiden avulla luodaan kokonaislukuliteraalia vastaava syntaksipuun lehtisolmu.
+

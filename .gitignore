@@ -10,9 +10,13 @@
 *.synctex.gz
 *.toc
 *.dvi
+*.pyg
 *.swp
 *.swo
 *.swq
 *.swr
 *.sws
 *.swn
+
+*.hi
+*.o
