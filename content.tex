@@ -14,6 +14,107 @@ Mac OS X-käyttöjärjestelmille  jakelupaketti ``Haskell Platform''~\cite{Haske
 joka sisältää GHC:n lisäksi kirjastoja esimerkiksi yksikkötestaukseen, POSIX-rajapintoihin
 sekä OpenGL:ään.
 
+\subsection{Operaattorit}
+Haskellissa kaikkia nimettyjä funktioita voi vaihtoehtoisesti käyttää binäärioperaattorina ympäröimällä funktion nimi kenohipsuilla (\texttt{`}):
+\begin{minted}{haskell}
+divides m n = n `mod` m == 0
+\end{minted}
+
+Toisin kuin monissa muissa operaattoreille infiksisyntaksia käyttävissä ohjelmointikielissä,
+Haskellissa käytettävissä olevia operaattoreita ei ole erikseen kovakoodattu kieleen,
+vaan ohjelmoija voi itse määritellä mielivaltaisia operaattoreita.
+
+\begin{listing}[H]
+\begin{minted}{haskell}
+(x1, y1) <+> (x2, y2) = (x1 + x2, y1 + y2)
+(x, y) .* k = (k * x, k * y)
+infixl 6 <+>
+infixl 7 .*
+\end{minted}
+\label{lst:operators-example}
+\caption{Esimerkki omien operaattoreiden määrittelystä.}
+\end{listing}
+
+Listauksessa \ref{lst:operators-example} määritellään kaksiuloitteisen vektorin yhteenlaskua
+ja skalaarilla kertomista vastaavat operaattorit \Haskell{<+>} ja \Haskell{.*}.
+Myös operaattoreiden sidontajärjestys on ohjelmoijan valittavissa;
+avainsanoilla \Haskell{infixl}, \Haskell{infixr} ja \Haskell{infix} määritellään sekä
+operaattoreiden suhteellinen prioriteetti (kokonaislukuna 0--9, pienempi sitoo tiukemmin) että
+samanprioriteettisten operaattoreiden laskemissuunta
+(vasemmalta oikealle, oikealta vasemmalle tai ei sallittu).
+Siis listauksen \ref{lst:operators-example} operaattoreita käyttäen olisi lauseke
+\Haskell{(1, 2) <+> 3 .* (4, 5)} tulkittavissa perinteisten matemaattisten operaattorien tapaan,
+eli \Haskell{(1, 2) <+> (3 .* (4, 5))}.
+
+\subsection{Funktioiden lähempää tarkastelua}
+Kuten aiemmissa luvuissa on nähty,
+Haskellin funktiotyypin ja funktiokutsun syntaksi poikkeaa paljon muista ohjelmointikielistä.
+Esimerkiksi Javassa hypoteettisen \texttt{charAt}-funktion tyypin syntaksi on
+
+\begin{itemize}
+    \item funktion tyyppi: \texttt{char charAt(String str, int index)}
+    \item funktiokutsu: \texttt{charAt("foo", 0)}
+\end{itemize}
+Haskellissa taasen:
+\begin{itemize}
+    \item funktion tyyppi: \Haskell{charAt :: String -> Int -> Char}
+    \item funktiokutsu: \Haskell{charAt "foo"\, 0}
+\end{itemize}
+
+Isoimpana erona Javaan verrattuna on, että Haskellissa funktion paluuarvo tulee loppuun eikä alkuun,
+ja funktiokutsussa sulkeita ei tarvita.
+Tämä ero ei ole tehty muiden ohjelmointikielten käyttäjien hämäämiseksi,
+vaan tällä syntaksivalinnalla voidaan yksinkertaistaa kieltä.
+Nimittäin edellä esitetty funktiotyyppi- ja kutsu tulkitaan Haskellissa seuraavasti:
+
+\begin{minted}{haskell}
+charAt :: String -> (Int -> Char)
+(charAt "foo") 0
+\end{minted}
+
+Selviääkin, että Haskellin ainoa funktiotyyppi on yksiparametrinen funktio,
+ja useampiparametriset funktiot on toteutettu funktioina, jotka palauttavat toisia funktioita.
+Eli siis selvennettynä,
+\Haskell{charAt} onkin funktio, joka ottaa \Haskell{String}:n ja palauttaa funktion,
+joka ottaa \Haskell{Int}:n ja palauttaa \Haskell{Char}:n.
+
+\subsection{Osittainsovellus}
+Edellisessä luvussa esitellyillä funktioiden ominaisuuksilla on muutakin etua
+kuin kielen yksinkertaistaminen; niiden avulla ohjelmia voi lyhentää tietyissä tilanteissa.
+Tarkastellaan seuraavaksi \Haskell{filterPositives}-funktiota, joka poistaa listasta kaikki
+epäpositiiviset luvut.
+Perinteinen tapa kirjoittaa kyseinen funktio näyttää tältä:
+
+\begin{minted}{haskell}
+filterPositives :: [Int] -> [Int]
+filterPositives luvut = filter (\x -> x > 0) luvut
+\end{minted}
+
+Edellisen voi kuitenkin kirjoittaa hieman lyhyemmin käyttämällä osittain soveltamista
+(engl. partial application) seuraavasti:
+
+\begin{minted}{haskell}
+filterPositives :: [Int] -> [Int]
+filterPositives = filter (\x -> x > 0)
+\end{minted}
+
+Kun kaksiparametriselle funktiolle \Haskell{filter} annetaan vain yksi kiinteä parametri,
+tulee lausekkeen arvoksi yksiparametrinen funktio,
+joka paluuarvonaan kutsuu \Haskell{filter}:iä sekä kiinteällä parametrillä että puuttuvalla parametrilla.
+
+Haskellissa on myös syntaksisokeria binäärioperaattorien osittain soveltamiselle.
+Mielivaltaiselle binäärioperaattorille \Haskell{@}:
+\begin{itemize}
+    \item \Haskell{(@ lauseke)} on sama kuin lambda-lauseke \Haskell{(\textbackslash x -> x @ lauseke)}
+    \item \Haskell{(lauseke @)} on sama kuin lambda-lauseke \Haskell{(\textbackslash x -> lauseke @ x)}
+\end{itemize}
+
+Tämän avulla voidaan \Haskell{filterPositives}-esimerkkiä lyhentää vielä lisää:
+\begin{minted}{haskell}
+filterPositives :: [Int] -> [Int]
+filterPositives = filter (>0)
+\end{minted}
+
 \subsection{Syntaksi ja määrittelyt}
 \subsection{Sisäänrakennetut tyypit}
 \subsection{Kontrollirakenteet}
