@@ -115,6 +115,30 @@ filterPositives :: [Int] -> [Int]
 filterPositives = filter (>0)
 \end{minted}
 
+\subsection{Laiskuus}
+
+Haskell on \emph{laiskasti evaluoitu} ohjelmointikieli,
+joka tarkoittaa että Haskellissa lausekkeen arvoa ei evaluoida ennen kuin sitä tarvitaan.
+Seuraava ohjelmaesimerkki havainnollistaa asiaa:
+
+\begin{listing}[H]
+    \inputminted{haskell}{codes/Laziness.hs}
+    \label{lst:laziness}
+    \caption{\texttt{Laziness.hs:} Esimerkki laiskasta evaluaatiosta}
+\end{listing}
+
+Listauksessa \ref{lst:laziness} \Haskell{nums}-niminen lista on alustettu arvoilla,
+jotka ei-laiskassa ohjelmointikielissä aiheuttaisivat virheen jo listan alustusrivillä:
+listan ensimmäisen alkion alustuksessa jaetaan nollalla ja kolmannennen alkion
+alustus päätyy ikuiseen rekursioon.
+Haskell-ohjelman tulostuksista voidaan sen sijaan nähdä,
+että siitä huolimatta \Haskell{nums}-listaa voidaan käsitellä varsin monella
+tavoin ilman suorituksen keskeytymistä tai jumiutumista.
+Myöskään muuttujan \Haskell{divByZeroPlusOne} luominen ei kaada ohjelmaa,
+vaan vasta \Haskell{print}-funktion kutsuminen aiheuttaa lausekkeen
+\Haskell{1 `div` 0} evaluoinnin, jolloin ohjelman suoritus päättyy
+eikä viimeistä tulostusta tapahdu.
+
 \subsection{Syntaksi ja määrittelyt}
 \subsection{Sisäänrakennetut tyypit}
 \subsection{Kontrollirakenteet}
