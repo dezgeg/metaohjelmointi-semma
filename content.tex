@@ -172,6 +172,33 @@ vaan vasta \Haskell{print}-funktion kutsuminen aiheuttaa lausekkeen
 \Haskell{1 `div` 0} evaluoinnin, jolloin ohjelman suoritus päättyy
 eikä viimeistä tulostusta tapahdu.
 
+\subsection{Laiskuuden käyttötapauksia}
+
+Monissa ohjelmointikielissä (kuten Javassa) monet loogiset operaattorit käyttävät nk. short-circuit-evaluaatiota,
+eli operaattorin oikeanpuolemmaista parametriä ei evaluoida tietyissä tilanteissa.
+Esimerkiksi seuraavassa esimerkissä tyhjä merkkijonoparametri funktiolla \texttt{startsWithDash} ei
+aiheuta \texttt{IndexOutOfBoundsException}-poikkeusta:
+
+\begin{minted}{java}
+    public static bool startsWithDash(String s) {
+        return s.length() > 0 && s.charAt(0) == '-';
+    }
+\end{minted}
+
+Javassa vain sisäänrakennetuilla \texttt{||}- ja \texttt{\&\&}-operaattoreilla on tämä ominaisuus,
+eikä ohjelmoija voi mitenkään itse tehdä uutta operaattoria tai funktiota,
+joka käyttäisi short-circuit-evaluaatiota.
+Haskellissa sen sijaan laiskan evaluaation ansiosta Javan tyyliset \texttt{||}- ja \texttt{\&\&}-operaattorit on
+yksinkertaisesti toteutettu seuraavina kirjastofunktioina:
+
+\begin{minted}{haskell}
+True  && x       =  x
+False && _       =  False
+
+True  || _       =  True
+False || x       =  x
+\end{minted}
+
 \subsection{Syntaksi ja määrittelyt}
 \subsection{Sisäänrakennetut tyypit}
 \subsection{Kontrollirakenteet}
