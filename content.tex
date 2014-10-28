@@ -14,6 +14,39 @@ Mac OS X-käyttöjärjestelmille  jakelupaketti ``Haskell Platform''~\cite{Haske
 joka sisältää GHC:n lisäksi kirjastoja esimerkiksi yksikkötestaukseen, POSIX-rajapintoihin
 sekä OpenGL:ään.
 
+Haskellin syntaksi poikkeaa suhteellisen paljon muista yleisesti käytetyistä ohjelmointikielistä.
+Listauksessa \ref{lst:first-example} on esimerkki,
+joka kysyy käyttäjältä nimeä ja tervehtii käyttäjää.
+
+\begin{listing}[H]
+    \inputminted{haskell}{codes/FirstExample.hs}
+    \label{lst:first-example}
+    \caption{Yksinkertainen Haskell-esimerkki.}
+\end{listing}
+
+Esimerkistä selviää muun muassa, että lohkorakenteita ei ole ilmaistu muulla kuin sisennyksellä,
+eikä lausekkeiden loppuun tarvitse laittaa päätemerkkiä (kuten puolipistettä).
+Välilyönnit ja rivinvaihdot ovat siis Haskellissa merkityksellisiä.
+Myöskin erikoista muihin staattisesti tyypitettyihin ohjelmointikieliin verrattaessa on,
+ettei koko ohjelmassa ole yhtään tyyppimäärittelyä.
+Haskellin tyyppijärjestelmä perustuu nk. Hindley-Milner-tyyppijärjestelmään~\cite{Hindley,Milner},
+joka mahdollistaa sekä muuttujien että funktioiden automaattisen tyyppienpäättelyn useimmissa tapauksissa.
+Funktiokutsun syntaksi eroaa myös yleisesti käytetystä notaatiosta;
+Haskellissa funktiokutsussa ei käytetä sulkeita (paitsi lausekkeiden ryhmittelyyn) ja parametrit erotetaan vain välilyönneillä.
+Taulukossa \ref{tbl:function-call-examples} on joitakin selventäviä esimerkkejä syntaksien eroista.
+
+\begin{table}
+    \begin{tabular}[H]{c|c}
+        Java                    &   Haskell         \\
+        \hline
+        \texttt{f()}            &   \texttt{f}              \\
+        \texttt{f(x, y, z)}     &   \texttt{f x y z}        \\
+        \texttt{f(x(a), y(t))}  &   \texttt{f (x a) (y t)}  \\
+    \end{tabular}
+    \label{tbl:function-call-examples}
+    \caption{Esimerkkejä Javan ja Haskellin funktiokutsusyntaksin eroista.}
+\end{table}
+
 \subsection{Operaattorit}
 Haskellissa kaikkia nimettyjä funktioita voi vaihtoehtoisesti käyttää binäärioperaattorina ympäröimällä funktion nimi kenohipsuilla (\texttt{`}):
 \begin{minted}{haskell}
