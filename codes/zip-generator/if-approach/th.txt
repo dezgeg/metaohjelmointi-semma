@@ -1,0 +1,63 @@
+runQ [d|
+myZip as bs =
+    if any null [as, bs]
+        then []
+        else (head as, head bs) : myZip (tail as) (tail bs)
+|]
+
+[FunD
+    myZip_24
+    [Clause
+        [VarP as_25,VarP bs_26]
+        (NormalB
+            (CondE
+                (AppE
+                    (AppE (VarE GHC.List.any) (VarE GHC.List.null))
+                    (ListE [VarE as_25,VarE bs_26]))
+                (ConE GHC.Types.[])
+                (InfixE
+                    (Just
+                        (TupE [
+                            AppE (VarE GHC.List.head) (VarE as_25),
+                            AppE (VarE GHC.List.head) (VarE bs_26)]))
+                    (ConE GHC.Types.:)
+                    (Just
+                        (AppE
+                            (AppE
+                                (VarE myZip_24)
+                                (AppE (VarE GHC.List.tail) (VarE as_25)))
+                            (AppE
+                                (VarE GHC.List.tail)
+                                (VarE bs_26))))))) []]]
+
+runQ [d|
+myZip3 as bs cs =
+    if any null [as, bs, cs]
+        then []
+        else (head as, head bs, head cs) : myZip3 (tail as) (tail bs) (tail cs)
+|]
+
+[FunD
+    myZip3_27
+    [Clause
+        [VarP as_28,VarP bs_29,VarP cs_30]
+        (NormalB
+            (CondE
+                (AppE (AppE (VarE GHC.List.any) (VarE GHC.List.null)) (ListE [VarE as_28,VarE bs_29,VarE cs_30]))
+                (ConE GHC.Types.[])
+                (InfixE
+                    (Just 
+                        (TupE [
+                            AppE (VarE GHC.List.head) (VarE as_28),
+                            AppE (VarE GHC.List.head) (VarE bs_29),
+                            AppE (VarE GHC.List.head) (VarE cs_30)]))
+                    (ConE GHC.Types.:)
+                    (Just
+                        (AppE
+                            (AppE
+                                (AppE
+                                    (VarE myZip3_27)
+                                    (AppE (VarE GHC.List.tail) (VarE as_28)))
+                                (AppE (VarE GHC.List.tail) (VarE bs_29)))
+                            (AppE (VarE GHC.List.tail) (VarE cs_30))))))) []]]
+

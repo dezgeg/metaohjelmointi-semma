@@ -298,3 +298,60 @@ data Exp
   | RecUpdE Exp [FieldExp]             -- ei kasitella!!! @{ (f x) { z = w } }@
   deriving( Show, Eq, Data, Typeable )
 \end{minted}
+
+\subsection{\Haskell{zip$N$}-funktioiden generointi Template Haskellilla}
+
+Eräs Haskellissa yleisesti listojen käsittelyyn käytetty funktio \Haskell{zip :: [a] -> [b] -> [(a, b)]},
+joka ottaa parametrinä kaksi listaa,
+ja muodostaa niistä listan pareja.
+
+\begin{listing}[H]
+\begin{minted}{haskell}
+zip "abc" "xyz"
+-- => [('a', 'x'), ('b', 'y'), ('c', 'z')]
+
+zip ["yksi", "kaksi", "kolme"] [1..10]
+-- => [("yksi", 1), ("kaksi", 2), ("kolme", 3)]
+-- eripituisilla listoilla ylijaavat alkiot pudotetaan pois
+\end{minted}
+\label{lst:zip-example}
+\caption{Esimerkki \Haskell{zip}-funktion käytöstä}
+\end{listing}
+
+\Haskell{zip}-funktion voi yleistää myös mielivaltaiselle määrälle listoja;
+esimerkiksi standardikirjaston funktio \Haskell{zip3} ottaa kolme listaa ja tuottaa listan kolmikoita.
+
+\begin{minted}{haskell}
+zip  :: [a] -> [b] -> [(a, b)]
+zip3 :: [a] -> [b] -> [c] -> [(a, b, c)]
+zip4 :: [a] -> [b] -> [c] -> [d] -> [(a, b, c, d)]
+-- jne.
+\end{minted}
+
+Funktiot \Haskell{zip} ja \Haskell{zip3} voisi toteuttaa esim. seuraavasti:
+
+\begin{minted}{haskell}
+zip l1 l2 = if any [null l1, null l2]
+    then []
+    else (head l1, head l2) : zip (tail l1) (tail l2)
+
+zip3 l1 l2 l3 = if any (==True) [null l1, null l2, null l3]
+    then []
+    else (head l1, head l2, head l3) : zip3 (tail l1) (tail l2) (tail l3)
+\end{minted}
+
+\Haskell{any}-funktio tarkistaa päteekö ensimmäisenä parametrinä annettu predikaattifunktio jollekin toisena parametrina annetun listan alkiolle.
+\Haskell{null}-funktio kertoo onko parametrinä annettu lista tyhjä.
+Siis jos mikä tahansa parametrilistoista on tyhjä, niin \Haskell{zip$N$}-funktion paluuarvo on tyhjä lista,
+muulloin luodaan monikko jokaisen parametrilistan ensimmäisestä alkiosta,
+ja liitetään se rekursiivisesti tehtyyn \Haskell{zip$N$}-kutsuun loppulistoille.
+
+Ohjelmoijan kannalta olisi ikävää, jos jokainen \Haskell{zip}-variantti pitäisi toteuttaa käsin.
+Template Haskellia käyttämällä on kuitenkin mahdollista luoda makro,
+jolla \Haskell{zip}-funktioiden luomisen voi automatisoida.
+
+\begin{listing}[H]
+    \inputminted{haskell}{codes/zip-generator/MakeZip.hs}
+    \label{lst:make-zip}
+    \caption{Mielivaltaisen \Haskell{zip$N$}-funktion generoiva Template Haskell-makro}
+\end{listing}
