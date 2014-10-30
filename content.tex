@@ -47,6 +47,66 @@ Taulukossa \ref{tbl:function-call-examples} on joitakin selventäviä esimerkkej
     \caption{Esimerkkejä Javan ja Haskellin funktiokutsusyntaksin eroista.}
 \end{table}
 
+\subsection{Perustyyppejä ja kontrollirakenteita}
+Haskellista löytyy kaksi kokonaislukutyyppiä: \Haskell{Int},
+jonka lukualue on rajallinen (toteutuksesta riippuen, kuitenkin vähintään 30 bittiä)
+sekä \Haskell{Integer},
+jonka lukualue on rajaton.
+Liukulukutyyppeinä löytyy \Haskell{Float} ja \Haskell{Double},
+jotka vastaavat lähes kaikkien muidenkin ohjelmointikielten käyttämiä IEEE 754-standardin mukaisia liukulukuja.
+Kaikille lukuliteraaleille syntaksi on samanlainen kuin Javassa.
+Totuusarvojen tyyppi on \Haskell{Bool},
+mutta yleisestä käytännöstä poiketen itse totuusarvot ovat \Haskell{True} ja \Haskell{False} isoilla alkukirjaimilla.
+Tälle erolle kirjainkoossa on itse syy; Haskellissa nimen ensimmäisen alkukirjaimen kirjainkoolla on merkitystä
+ja sekä tyyppien että vakioiden nimien täytyy alkaa isolla alkukirjaimella.
+
+Useista imperatiivisista kielistä poiketen \Haskell{if-then-else}-konstruktio ei ole lause (statement),
+vaan lauseke (expression).
+Siis \Haskell{if} palauttaa aina arvon, mikä tarkoittaa myös että \Haskell{else}-haara on aina pakollinen.
+
+\begin{minted}{haskell}
+henkilonKuvaus ika = if ika < 18
+                        then "Lapsi"
+                        else "Aikuinen"
+luvunKuvaus n = "Luku on " ++ (if n < 0 then "negatiivinen" else "positiivinen")
+\end{minted}
+
+Useamman kuin yhden ehdon vertailulle on oma syntaksinsa.
+
+\begin{minted}{haskell}
+fizzbuzz n | n % 15 == 0 = "FizzBuzz"
+           | n % 3  == 0 = "Fizz"
+           | n % 5  == 0 = "Buzz"
+           | otherwise   = show n
+\end{minted}
+
+Koska Haskell on puhtaasti funktionaalinen ohjelmointikieli,
+ei muuttujan arvon muuttaminen ole mahdollista.
+Näinollen kielessä ei myöskään ole ollenkaan silmukoita kontrollirakenteina,
+vaan niiden tilalla on käytettävä rekursiota.
+Esimerkiksi kertomafunktio voitaisiin toteuttaa seuraavasti:
+
+\begin{minted}{haskell}
+factorial n | n == 0    = 1
+            | otherwise = n * factorial (n - 1)
+\end{minted}
+
+Kun käytetään rekursiota silmukan korvikkeena,
+on oltava tarkkana rekursiokutsujen viemän pinokehyksien tilamäärän kanssa.
+Esimerkiksi edellisen esimerkin \Haskell{factorial}-funktio on epätehoton ja käyttää lineaarisen määrän muistia.
+Monet rekursiiviset funktiot on kuitenkin apufunktion avulla mahdollista kirjoittaa siten,
+että ne käyttävät vakiomäärän muistia.
+Koska tällaisia apufunktion vaativia tilanteita tulee Haskellissa vastaan usein,
+voi \Haskell{where}-avainsanalla tehdä paikallisia muuttujien- ja funktioiden määrittelyjä.
+
+\begin{minted}{haskell}
+factorial n = fac' n 1
+    where fac' n acc | n == 0    = acc
+                     | otherwise = fac' (n - 1) (n * acc)
+\end{minted}
+
+Edellisessä esimerkissä funktion \Haskell{fac'} näkyvyys on ainoastaan \Haskell{factorial}-funktion sisällä.
+
 \subsection{Operaattorit}
 Haskellissa kaikkia nimettyjä funktioita voi vaihtoehtoisesti käyttää binäärioperaattorina ympäröimällä funktion nimi kenohipsuilla (\texttt{`}):
 \begin{minted}{haskell}
@@ -198,12 +258,6 @@ False && _       =  False
 True  || _       =  True
 False || x       =  x
 \end{minted}
-
-\subsection{Syntaksi ja määrittelyt}
-\subsection{Sisäänrakennetut tyypit}
-\subsection{Kontrollirakenteet}
-\subsection{Omien tyyppien määrittely}
-\subsection{Tyyppiluokat}
 
 \section{Metaohjelmointi Haskellilla}
 \subsection{Template Haskell}
