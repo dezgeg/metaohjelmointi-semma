@@ -164,6 +164,47 @@ containsElement (x:xs) elem | x == elem = True
                             | otherwise = containsElement xs elem
 \end{minted}
 
+\subsection{Anonyymit funktiot}
+Anonyymi funktio muodostetaan kenoviivalla (\texttt{\textbackslash}), jota seuraa
+parametrilista, nuoli (\texttt{->}), ja lopuksi funktion runko.
+Semanttisesti anonyymien funktioiden ja tavallisten funktioiden välillä ei ole mitään eroa.
+\begin{minted}{haskell}
+square = \x -> x * x
+
+fiveSquared = square 5 -- => 25
+\end{minted}
+Haskellissa funktiot ovat tavallisia arvoja (functions as first-class values);
+niitä voi esim. antaa funktion parametreinä sekä palauttaa funktioista.
+Anonyymien funktioiden avulla sulkeumien luominen on mahdollista.
+
+\begin{minted}{haskell}
+callTwice :: (a -> a) -> a -> a
+callTwice f x = f (f x)
+
+makeAdder :: Int -> (Int -> Int)
+makeAdder amount = \x -> x + amount
+
+increment = makeAdder 1
+
+main = do
+    print (callTwice (\x -> 10 * x) 5) -- => 500
+    print (increment 5)                -- => 6
+\end{minted}
+Anonyymit funktiot ovat erityisen käytännöllisiä seuraavissa useimmin käytetyissä listaoperaatioissa:
+\begin{itemize}
+    \item \Haskell{map :: (a -> b) -> [a] -> [b]} - ottaa funktion ja listan, kutsuu annettua funktiota listan kaikille alkioille
+    \item \Haskell{filter :: (a -> Bool) -> [a] -> [a]} - ottaa predikaattifunktion ja listan, palauttaa listasta ne alkiot joille predikaatti pätee
+\end{itemize}
+\begin{minted}{haskell}
+-- kasvata jokaista lukua sadalla
+map (\x -> x + 100) [1, 2, 3] -- => [101, 102, 103]
+-- isonna koko merkkijonon kirjainkoko
+map (toUpper) "Foo" -- => "FOO"
+-- valitse listasta vain b:lla alkavat sanat
+filter (\str -> str !! 0 == 'b') ["foo", "bar", "baz", "quux", "biff"]
+    -- => ["bar", "baz", "biff"]
+\end{minted}
+
 \subsection{Operaattorit}
 Haskellissa kaikkia nimettyjä funktioita voi vaihtoehtoisesti käyttää binäärioperaattorina ympäröimällä funktion nimi kenohipsuilla (\texttt{`}):
 \begin{minted}{haskell}
