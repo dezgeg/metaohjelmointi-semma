@@ -107,6 +107,63 @@ factorial n = fac' n 1
 
 Edellisessä esimerkissä funktion \Haskell{fac'} näkyvyys on ainoastaan \Haskell{factorial}-funktion sisällä.
 
+\subsection{Hahmonsovitus}
+Hahmonsovituksen (pattern matching) voidaan katsoa olevan laajennettu versio esim. javan \texttt{switch}-lauseesta.
+Eräs tapa käyttää hahmonsovitusta Haskellissa on \Haskell{case}-lauseke:
+\begin{minted}{haskell}
+fibonacci n = case n of
+                1 -> 1
+                2 -> 1
+                _ -> fibonacci (n - 1) + fibonacci (n - 2)
+\end{minted}
+Edellisessä esimerkissä parametriä \Haskell{n} verrataan järjestyksessa hahmoihin \Haskell{1}, \Haskell{2} ja \Haskell{\_},
+ja suoritus jatkuu siltä riviltä jolla vertailu onnistui.
+Hahmo \Haskell{\_} on ``wildcard'' eli arvon vertailu hahmoon onnistuu aina.
+
+Koska hahmonsovitusta käytetään Haskellissa paljon, on sille lyhyempi syntaksi olemassa:
+hahmonsovitusta voi tehdä suoraan funktion parametrilistassa:
+
+\begin{minted}{haskell}
+fibonacci 1 = 1
+fibonacci 2 = 1
+fibonacci n = fibonacci (n - 1) + fibonacci (n - 2)
+\end{minted}
+
+\subsection{Listat}
+
+Kuten muissakin funktionaalisen paradigman ohjelmointikielissä,
+Haskellissa perustietorakenne tiedon säilömiseen on linkitetty lista eikä taulukko.
+Listan tyyppi kirjoitetaan hakasulkeilla, esimerkiksi tyyppi \Haskell{[Integer]} on lista kokonaislukuja.
+Haskellissa ei ole erikseen tietotyyppiä merkkijonoille,
+vaan \Haskell{String} on alias tyypille \Haskell{[Char]},
+jossa \Haskell{Char}-tyyppi vastaa Unicode-merkkiä.
+
+Listaliteraalin voi luoda laittamalla alkiot hakasulkujen sisään pilkulla erotettuina.
+Merkkijonoliteraali on vain erikoissyntaksi \Haskell{Char}-listalle.
+\begin{minted}{haskell}
+luvut = [1, 2, 3]
+mjono1 = "foo"           -- tyyppi [Char]
+mjono2 = ['f', 'o', 'o'] -- tyyppi [Char], sama kuin mjono1
+\end{minted}
+
+Linkitetyn listan toteutus esimerkiksi Javassa on tyypillisesti solmuluokka,
+joka sisältää yhtenä kenttänä listan alkion ja toisena kenttänä viitteen seuraavaan solmuun.
+Haskellissa listasolmua vastaa nk. cons-operaattori \Haskell{:}, joka voidaan
+mieltää operaattorina joka lisää olemassaolevan listan alkuun yhden alkion.
+Esimerkiksi \Haskell{[1, 2, 3]} cons-operaattorin avulla ilmaistuna on \Haskell{1:2:3:[]},
+tai täysin sulutettuna \Haskell{1:(2:(3:[]))}.
+\Haskell{:}-operaattori on myös samalla \emph{tyyppikonstruktori},
+mikä tarkoittaa että sitä voidaan käyttää hahmonsovituksessa.
+
+\begin{minted}{haskell}
+length []     = 0
+length (_:xs) = 1 + length xs
+
+containsElement []     elem = False
+containsElement (x:xs) elem | x == elem = True
+                            | otherwise = containsElement xs elem
+\end{minted}
+
 \subsection{Operaattorit}
 Haskellissa kaikkia nimettyjä funktioita voi vaihtoehtoisesti käyttää binäärioperaattorina ympäröimällä funktion nimi kenohipsuilla (\texttt{`}):
 \begin{minted}{haskell}
