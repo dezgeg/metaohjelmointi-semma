@@ -1,0 +1,592 @@
+\documentclass{beamer}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[finnish]{babel}
+\usepackage{listings}
+\usepackage{minted}
+\usepackage{verbatim}
+\usepackage{amsfonts,amsmath,amssymb}
+
+\title{Metaohjelmointi Haskell-ohjelmointikielellä}
+\author{Tuomas Tynkkynen}
+\institute{Helsingin Yliopisto}
+\date{\today}
+\lstset{language=Haskell}
+\setbeamersize{text margin left=5pt,text margin right=5pt}
+\beamertemplatenavigationsymbolsempty
+
+\begin{document}
+\frame{\titlepage}
+
+\begin{comment}
+
+\begin{frame}
+\frametitle{Haskell?}
+    \begin{itemize}
+        \item{staattisesti tyypitetty}
+        \item{vahvasti tyypitetty}
+        \item{laiskasti evaluoitu}
+        \item{puhtaasti funktionaalinen ohjelmointikieli}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Haskell-esimerkki}
+\begin{minted}{haskell}
+main = do
+    putStrLn "Mika on nimesi?"
+    nimi <- getLine
+    putStrLn (tervehdi nimi)
+
+tervehdi hlo = "Hei, " ++ hlo ++ "!"
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Kontrollirakenteita - ehtolauseke}
+\begin{itemize}
+\item{If on lauseke (expression), ei lause (statement)}
+\begin{itemize}
+\item{Palauttaa aina arvon}
+\item{\texttt{else}-haaraa ei voi jättää pois}
+\end{itemize}
+\end{itemize}
+
+\begin{minted}{haskell}
+henkilonKuvaus ika = if ika < 18
+                        then "Lapsi"
+                        else "Aikuinen"
+luvunKuvaus n = "Luku on " ++ (if n < 0
+                                  then "negatiivinen"
+                                  else "positiivinen")
+\end{minted}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Kontrollirakenteita - useampi vertailu}
+\begin{minted}{haskell}
+fizzbuzz n | n % 15 == 0 = "FizzBuzz"
+           | n % 3 == 0  = "Fizz"
+           | n % 5 == 0  = "Buzz"
+           | otherwise   = show n
+\end{minted}
+\begin{itemize}
+\item{Ehdot tarkistetaan ylhäältä alas-järjestyksessä}
+\item{Ajonaikainen virhe jos mikään ehdoista ei täyty}
+\item{\texttt{otherwise} sama kuin \texttt{True}}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Kontrollirakenteita - muuttujat}
+\begin{itemize}
+\item{Kaksi vaihtoehtoista tapaa}
+\begin{itemize}
+
+\item{\texttt{let-in}:}
+\begin{minted}{haskell}
+yearsToSeconds years = let secondsInAHour = 60 * 60
+                           hoursInAYear = 24 * 365
+          in years * hoursInAYear * secondsInAHour
+\end{minted}
+
+\item{\texttt{where}:}
+\begin{minted}{haskell}
+yearsToSeconds = years * hoursInAYear * secondsInAHour
+    where secondsInAHour = 60 * 60
+          hoursInAYear = 24 * 365
+\end{minted}
+
+\end{itemize}
+\item{Haskellissa muuttujan arvoa EI voi muuttaa}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Kontrollirakenteita -- silmukat... NOT}
+\begin{itemize}
+\item{Koska muuttujan arvoa ei voi muuttaa, \mbox{\texttt{for(i = 0; i < n; i++)}}-silmukka ei mielekäs}
+\item{Haskellissa ei silmukkarakenteita ollenkaan, vaan käytettävä rekursiota}
+\item{Esimerkiksi kertoman laskeminen:}
+\begin{minted}{haskell}
+factorial n | n == 0    = 1
+            | otherwise = n * factorial (n - 1)
+\end{minted}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Kontrollirakenteita -- häntärekursio}
+\begin{itemize}
+
+\item{Rekursiivisten funktioiden yksi tunnettu ongelma on pinomuistin käyttö}
+\item{Esimerkiksi edeltävä factorial-toteutus käyttää lineaarisen määrän muistia}
+\begin{minted}{haskell}
+factorial n | n == 0    = 1
+            | otherwise = n * factorial (n - 1)
+\end{minted}
+
+\item{Monet rekursiiviset funktiot voi kuitenkin kirjoittaa apufunktion avulla \emph{häntärekursiona}}
+\item{Kääntäjäoptimoinnit voivat muuntaa häntärekursion silmukaksi konekieltä generoitaessa}
+\begin{minted}{haskell}
+factorial n = fac' n 1
+where fac' n acc | n == 0    = acc
+                 | otherwise = fac' (n - 1) (n * acc)
+\end{minted}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Kontrollirakenteita -- hahmonsovitus}
+
+\begin{itemize}
+
+\item{Hahmonsovitus (pattern matching) on laajempi versio esim. Javan \texttt{switch-case}-lauseesta}
+\item{Yksi tapa tehdä hahmonsovitus on \texttt{case}-lauseke}
+\begin{minted}{haskell}
+fibonacci n = case n of
+        1 -> 1
+        2 -> 1
+        _ -> fibonacci (n - 1) + fibonacci (n - 2)
+\end{minted}
+
+\item{Vertailu ylhäältä alas}
+\item{Ajonaikainen virhe jos minkään hahmon sovitus ei onnistu}
+\item{Palauttaa arvon, kuten \texttt{if}}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Kontrollirakenteita -- hahmonsovitus}
+\begin{itemize}
+\item{Hyvin usein hahmonsovituksessa käytetään vertailtavana arvona jotain funktion parametriä:}
+\begin{minted}{haskell}
+fibonacci n = case n of
+        1 -> 1
+        2 -> 1
+        _ -> fibonacci (n - 1) + fibonacci (n - 2)
+\end{minted}
+
+\item{Lyhyempi syntaksi: hahmonsovituksen voi tehdä suoraan funktion parametrilistassa}
+
+\begin{minted}{haskell}
+fibonacci 1 = 1
+fibonacci 2 = 1
+fibonacci n = fibonacci (n - 1) + fibonacci (n - 2)
+\end{minted}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Listat}
+\begin{itemize}
+\item{Funktionaalisissa kielissä perustietorakenteena yksisuuntainen linkitetty lista taulukon sijaan}
+\item{Listan tyyppi ilmaistaan laittamalla hakasulkeissa alkioiden tyyppi, esim. \texttt{[Integer]} on lista kokonaislukuja}
+\item{\texttt{String} on sama kuin \texttt{[Char]}}
+
+\begin{minted}{haskell}
+luvut = [1, 2] ++ [3, 4]         -- [1, 2, 3, 4]
+mjono1 = "foobar"                       -- "foobar"
+mjono2 = ['f', 'o', 'o', 'b', 'a', 'r'] -- "foobar"
+\end{minted}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Joitain listafunktioita}
+
+\begin{itemize}
+
+\item{Joitakin operaattoreita ja funktioita:}
+\begin{minted}{haskell}
+length :: [a] -> Int        -- pituus
+(++) :: [a] -> [a] -> [a]   -- konkatenaatio
+(!!) :: [a] -> Int -> a     -- indeksointi
+\end{minted}
+
+\item{Edellä \texttt{a} on tyyppiparametri}
+
+\item{Käyttöesimerkkejä:}
+\begin{minted}{haskell}
+luvut = [1, 2] ++ [3, 4]         -- [1, 2, 3, 4]
+lukujenPituus = length luvut     -- 4
+tokaKirjain = mjono !! 1         -- 'o'
+\end{minted}
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Listojen rakenne}
+\begin{itemize}
+\item{Listasolmun toteutus Javassa näyttää esim. tältä:}
+\begin{minted}{java}
+class ListNode<T> {
+    public T value;
+    public ListNode<T> next;
+}
+\end{minted}
+
+\item{Haskellissa listasolmun luominen tapahtuu nk. cons-operaattorilla \texttt{:}}
+\begin{minted}{haskell}
+(:) :: a -> [a] -> [a]
+\end{minted}
+
+\item{\texttt{:} voidaan mieltää operaattorina, joka lisää yhden alkion olemassaolevan listan alkuun}
+\begin{minted}{haskell}
+[1, 2, 3] == 1:2:3:[] == 1:(2:(3:[]))
+\end{minted}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Listojen läpikäynti}
+
+\begin{itemize}
+\item{Yksi tapaa tapa on käyttää seuraavia funktioita}
+\begin{minted}{haskell}
+null :: [x] -> Bool    -- kertoo onko lista tyhja
+head :: [x] -> x       -- palauttaa ensimmaisen alkion
+tail :: [x] -> [x]     -- palauttaa loput alkiot
+\end{minted}
+
+\item{Esimerkiksi:}
+\begin{minted}{haskell}
+head [1, 2, 3] == 1
+tail [1, 2, 3] == [2, 3]
+\end{minted}
+
+\item{Edellisten funktioiden avulla voidaan käyttää seuraavasti:}
+\begin{minted}{haskell}
+length list | null list = 0
+            | otherwise = 1 + length (tail list)
+
+containsElement list element
+    | null list = False
+    | head list == element = True
+    | otherwise = containsElement (tail list) element
+\end{minted}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Listojen hahmonsovitus}
+\begin{itemize}
+\begin{minted}{haskell}
+length list | null list = 0
+            | otherwise = 1 + length (tail list)
+
+containsElement list element
+    | null list = False
+    | head list == element = True
+    | otherwise = containsElement (tail list) element
+\end{minted}
+\item{Edelliset funktiot voi kirjoittaa lyhyemminkin}
+\item{\texttt{:}-operaattoria voi nimittäin käyttää hahmonsovituksessa}
+\begin{minted}{haskell}
+length []     = 0
+length (_:xs) = 1 + length xs
+
+containsElement [] _ = False
+containsElement (x:xs) element
+    | x == element = True
+    | otherwise = containsElement xs element
+\end{minted}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Funktionaalista ohjelmointia listoilla}
+\begin{itemize}
+\item{Haskellissa funktiot ovat arvoja (functions as first-class values)}
+\item{Funktioita voi sijoittaa muuttujiin, antaa funktion parametreinä, palauttaa yms.}
+\item{Monet listafunktiot ottavat funktioita parametrinä, tunnetuimpina:}
+\begin{minted}{haskell}
+map :: (a -> b) -> [a] -> [b]
+filter :: (a -> Bool) -> [a] -> [a]
+\end{minted}
+
+\item{Esimerkkejä \texttt{map}:n ja \texttt{filter}:n käytöstä}
+\begin{minted}{haskell}
+square x = x * x
+listOfSquares = map square [1, 2, 3, 4]
+--            = [1, 4, 9, 16]
+
+isPositive n = n > 0
+onlyPositives = filter isPositive [2, -4, 8, -16, -32]
+--            = [2, 8]
+\end{minted}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Anonyymit funktiot}
+\begin{itemize}
+
+\item{Kerran käytettyjen pikkufunktioiden nimeäminen on usein ikävää}
+\begin{minted}{haskell}
+square x = x * x
+listOfSquares = map square [1, 2, 3, 4]
+--            = [1, 4, 9, 16]
+
+isPositive n = n > 0
+onlyPositives = filter isPositive [2, -4, 8, -16, -32]
+--            = [2, 8]
+\end{minted}
+
+\item{Nimetyn fuktion sijaan on usein kätevämpää käyttää anonyymiä funktiota}
+\begin{minted}{haskell}
+listOfSquares = map (\x -> x * x) [1, 2, 3, 4]
+onlyPositives = filter (\n -> n > 0) [2, -4, 8, -16, -32]
+\end{minted}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Lisää funktioista}
+\begin{itemize}
+\item{Anonyymien funktioiden avulla sulkeumien luominen on mahdollista}
+\begin{minted}{haskell}
+makeAdder :: Int -> (Int -> Int)
+makeAdder amount = \x -> x + amount
+
+addTen = makeAdder 10
+fifteen = addTen 5      -- 15
+\end{minted}
+
+\item{Vielä esimerkki funktion parametrinä ottavasta funktiosta:}
+\begin{minted}{haskell}
+callTwice :: (a -> a) -> a -> a
+callTwice f x = f (f x)
+
+twentyFive = callTwice addTen 5    -- 25
+\end{minted}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Operaattoreiden määritys}
+
+\begin{itemize}
+%\item{Kaikkia nimettyjä funktioita voi käyttää operaattorina kenohipsuilla (`)}
+%\begin{minted}{haskell}
+%divides m n = n 'mod' m == 0
+%\end{minted}
+
+\item{Omia symboleista koostuvia operaattoreita voi määritellä}
+% \item{Myös presedenssi on ohjelmoijan määriteltävissä}
+\item{Esimerkiksi 2d-vektorin yhteenlaskulle ja skalaarikertolaskulle voisi määritellä operaattorit \texttt{<+>} ja \texttt{.*} seuraavasti:}
+\begin{minted}{haskell}
+(x1, y1) <+> (x2, y2) = (x1 + x2, y1 + y2)
+infixl 6 <+>
+
+(x, y) .* k = (k * x, k * y)
+infixl 7 .*
+\end{minted}
+\item{Edellä \texttt{<+>}- ja \texttt{.*}-operaattoreiden laskujärjestys noudattaa matemaattista käytäntöä, eli}
+\begin{minted}{haskell}
+   (100, 200) <+> 10 .* (4, 5)
+== (100, 200) <+> (10 .* (4, 5))
+== (140, 250)
+\end{minted}
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Laiska evaluaatio}
+\begin{itemize}
+\item{Haskellissa minkään lausekkeen arvoa ei lasketa, ennen kuin sitä tarvitaan.}
+\end{itemize}
+\begin{minted}{haskell}
+infiniteRecursion :: Int -> Int
+infiniteRecursion x = infiniteRecursion (x + 1)
+
+nums = [10 `div` 0, 20, infiniteRecursion 30, 40]
+main = do
+  print (length nums)         -- tulostaa 4
+  print (nums !! 1)           -- tulostaa 20
+  let divZeroPlusOne = (nums !! 0) + 1
+  print (reverse nums !! 0)   -- tulostaa 40
+  print divZeroPlusOne        -- suoritus kaatuu virheeseen:
+                              -- 'Tiedosto.hs: divide by zero'
+  print "Not executed"        -- ei enaa tulosteta
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Laiskan evaluaation käyttötapauksia}
+\begin{itemize}
+\item{oikosulkuevaluaatio (short-circuit evaluation)}
+\begin{itemize}
+\item{Esimerkikisi Javassa:}
+\begin{minted}{java}
+public static bool startsWithDash(String s) {
+    return s.length() > 0 && s.charAt(0) == '-';
+}
+\end{minted}
+
+\item{Onnistuu Haskellissakin:}
+\begin{minted}{haskell}
+startsWithDash s = length s > 0 && s !! 0 == '-'
+\end{minted}
+
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Laiskan evaluaation käyttötapauksia}
+\begin{itemize}
+\item{Javassa short-circuit-evaluaatio ainoastaan \&\&- ja ||-operaattoreilla}
+\item{Haskellissa \&\& ja \verb+||+ taas on toteutettavissa kirjastofunktioina!}
+
+\begin{minted}{haskell}
+False && _ = False
+True  && b = b
+
+True  || _ = True
+False || b = b
+\end{minted}
+
+\item{Myös ei-oikosulkevat versiot olisi mahdollista toteuttaa}
+\begin{minted}{haskell}
+True  && True  = True
+True  && False = False
+False && True  = False
+False && False = False
+\end{minted}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Template Haskell}
+\begin{itemize}
+\item{Makrojärjestelmä Haskelliin}
+\item{Toimii AST-tasolla}
+\item{Makrokielenä Haskell itse}
+\item{Ei Haskell 2010-standardissa, GHC-kääntäjän ekstensio}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{TH-esimerkki: käännösaikainen evaluaatio}
+\begin{itemize}
+\item{Määritellään makro \texttt{compileTimeEval} aritmeettisen lausekkeen evaluointiin käännösaikana:}
+\begin{minted}{haskell}
+\end{minted}
+
+\begin{minted}{haskell}
+module THExample where
+import Language.Haskell.TH.Lib
+import Language.Haskell.TH.Syntax
+
+compileTimeEval :: Integer -> Q Exp
+compileTimeEval i = litE (integerL i)
+\end{minted}
+
+\item{Esimerkki \texttt{compileTimeEval}-makron käytöstä}
+\begin{minted}{haskell}
+{-# LANGUAGE TemplateHaskell #-}
+module Main where
+import THExample (compileTimeEval)
+
+main = do
+    print (2 * $(compileTimeEval (sum [1..1000000])))
+    print $(compileTimeEval (1 `div` 0))
+\end{minted}
+\end{itemize}
+\end{frame}
+
+\end{comment}
+
+\begin{frame}[fragile]
+\frametitle{Laajempi TH-esimerkki: \texttt{zip$n$}-funktioiden generointi}
+
+\begin{itemize}
+\item{Tarkastellaan standardikirjaston listafunktiota \texttt{zip}:}
+\begin{minted}{haskell}
+zip :: [a] -> [b] -> [(a, b)]
+\end{minted}
+\item{Esimerkkejä \texttt{zip}:in käytöstä:}
+\begin{minted}{haskell}
+zip [1, 2, 3] ["yksi", "kaksi", "kolme", "???"]
+-- == [(1, "yksi"), (2, "kaksi"), (3, "kolme")]
+\end{minted}
+
+\item{\texttt{zip}:n voi yleistää useammalle parametrille:}
+\begin{minted}{haskell}
+zip3 :: [a] -> [b] -> [c] -> [(a, b, c)]
+zip4 :: [a] -> [b] -> [c] -> [d] -> [(a, b, c, d)]
+-- jne.
+
+zip3 "abc" "xyz" "ijk"
+-- == [('a', 'x', 'i'), ('b', 'y', 'j'), ('c', 'z', 'k')]
+\end{minted}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Laajempi TH-esimerkki: \texttt{zip$n$}-funktioiden generointi}
+
+\begin{itemize}
+\item{\texttt{zip} ja \texttt{zip3} voisi toteuttaa esim. seuraavasti}
+
+\begin{minted}{haskell}
+zip :: [a] -> [b] -> [(a, b)]
+zip l1 l2 = if or [null l1, null l2]
+    then []
+    else (head l1, head l2) : zip (tail l1) (tail l2)
+
+
+zip3 :: [a] -> [b] -> [c] -> [(a, b, c)]
+zip3 l1 l2 l3 = if or [null l1, null l2, null l3]
+    then []
+    else (head l1, head l2, head l3) :
+            zip3 (tail l1) (tail l2) (tail l3)
+\end{minted}
+
+\item{\texttt{zip$n$}-funktioiden luomisen voi tehdä Template Haskell-makrolla}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Laajempi TH-esimerkki: \texttt{zip$n$}-funktioiden generointi}
+% \fontsize{6pt}{7.2}\selectfont
+\footnotesize
+\begin{minted}{haskell}
+makeZip :: Int -> Q Dec
+makeZip arity = let
+  functionName = mkName (if arity == 2 then "zip" else "zip" ++ show arity)
+  varNames = map (\i -> mkName ("l" ++ show i)) [1..arity]
+
+  isEmptyExprs = listE (map (\v -> [| null $(varE v) |]) varNames)
+  tupleExpr = tupE (map (\v -> [| head $(varE v) |]) varNames)
+  recursiveCallExpr = appsE (varE functionName :
+                                map (\v -> [| tail $(varE v) |]) varNames)
+
+  body = runQ [| if or $(isEmptyExprs)
+                    then []
+                    else $(tupleExpr) : $(recursiveCallExpr) |]
+
+  declaration = funD functionName
+      [clause
+          (map varP varNames)
+          (normalB body)
+          []]
+      in runQ declaration
+\end{minted}
+\end{frame}
+
+\end{document}
