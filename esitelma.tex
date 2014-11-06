@@ -17,8 +17,7 @@
 
 \begin{document}
 \frame{\titlepage}
-
-\begin{comment}
+%\begin{comment}
 
 \begin{frame}
 \frametitle{Haskell?}
@@ -40,10 +39,81 @@ main = do
 
 tervehdi hlo = "Hei, " ++ hlo ++ "!"
 \end{minted}
+
+% \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+
+\begin{itemize}
+\item{Huomattavaa:}
+\begin{itemize}
+\item{Ei kaarisulkeita: \texttt{\{ \}} eikä puolipisteitä \texttt{;}}
+\item{Funktiokutsun syntaksi erilainen}
+\item{Yhtään tyyppiä ei mainittu!}
+\end{itemize}
+\end{itemize}
+
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Kontrollirakenteita - ehtolauseke}
+\frametitle{Tyyppejä ja arvoja}
+\begin{itemize}
+\item{Tyyppejä:}
+\begin{itemize}
+\item{\texttt{Int}, \texttt{Integer}: kokonaislukuja}
+\item{\texttt{Float}, \texttt{Double}: liukulukuja}
+\item{\texttt{Bool}: totuusarvo, \texttt{True} tai \texttt{False}}
+\end{itemize}
+\item{Arvoja:}
+\begin{minted}{haskell}
+integerLuku = 1 + 3 * 3000          -- 9001
+tosi = 1 > 0                        -- True
+epatosi = 1 /= 1                    -- False
+
+doublePii = 3.141592653589793
+
+floatPii :: Float
+floatPii = 3.1415927
+
+kaksPii = doublePii + floatPii -- tyyppivirhe!
+\end{minted}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Funktioiden määrittely}
+\begin{itemize}
+\item{Esimerkiksi kahden \texttt{Float}-luvun keskiarvo:}
+\begin{minted}{haskell}
+average :: Float -> Float -> Float
+average a b = (a + b) / 2.0
+\end{minted}
+
+\item{Esimerkki \texttt{average}-funktion kutsusta}
+\begin{minted}{haskell}
+foo = average 2.0 5.0           -- 3.5
+\end{minted}
+
+\item{Funktion tyypin syntaksi poikkeaa merkittävästi esim. Javasta}
+\begin{description}[labelwidth=\widthof{\bfseries Haskell:}]
+    \item[Java:]{\texttt{char charAt(String, int)}}
+    \item[Haskell:]{\texttt{charAt :: String -> Int -> Char}}
+\end{description}
+\item{Myös funktiokutsun syntaksi poikkeaa:}
+\end{itemize}
+\begin{center}
+    \begin{tabular}[H]{l|l}
+        Java                    &   Haskell         \\
+        \hline
+        \texttt{f(x)}           &   \texttt{f x}            \\
+        \texttt{f(x, y)}        &   \texttt{f x y}          \\
+        \texttt{f(g(x))}        &   \texttt{f (g x)}        \\
+        \texttt{f(x) + f(y)}    &   \texttt{f x + f y}      \\
+        \texttt{f(x + g(y))}    &   \texttt{f (x + g y)}    \\
+    \end{tabular}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Kontrollirakenteita -- ehtolauseke}
 \begin{itemize}
 \item{If on lauseke (expression), ei lause (statement)}
 \begin{itemize}
@@ -53,25 +123,26 @@ tervehdi hlo = "Hei, " ++ hlo ++ "!"
 \end{itemize}
 
 \begin{minted}{haskell}
-henkilonKuvaus ika = if ika < 18
-                        then "Lapsi"
-                        else "Aikuinen"
-luvunKuvaus n = "Luku on " ++ (if n < 0
-                                  then "negatiivinen"
-                                  else "positiivinen")
+itseisarvo n = if n < 0.0
+                    then -n
+                    else n
+henkilonKuvaus ika = "Henkilo on " ++ (if ika > 18
+                                        then "aikuinen"
+                                        else "lapsi")
 \end{minted}
 
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Kontrollirakenteita - useampi vertailu}
+\frametitle{Kontrollirakenteita -- useampi vertailu}
 \begin{minted}{haskell}
-fizzbuzz n | n % 15 == 0 = "FizzBuzz"
-           | n % 3 == 0  = "Fizz"
-           | n % 5 == 0  = "Buzz"
-           | otherwise   = show n
+etumerkki n | n >  0.0  = "positiivinen"
+            | n <  0.0  = "negatiivinen"
+            | n == 0.0  = "nolla"
+            | otherwise = "NaN"
 \end{minted}
 \begin{itemize}
+\item{Putkimerkin \texttt{|} ja yhtäsuuruusmerkin välissä mielivaltainen \texttt{Bool}-lauseke}
 \item{Ehdot tarkistetaan ylhäältä alas-järjestyksessä}
 \item{Ajonaikainen virhe jos mikään ehdoista ei täyty}
 \item{\texttt{otherwise} sama kuin \texttt{True}}
@@ -79,23 +150,24 @@ fizzbuzz n | n % 15 == 0 = "FizzBuzz"
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Kontrollirakenteita - muuttujat}
+\frametitle{Kontrollirakenteita -- muuttujat}
 \begin{itemize}
-\item{Kaksi vaihtoehtoista tapaa}
+\item{Kaksi vaihtoehtoista tapaa paikallisten muuttujien luomiseen:}
 \begin{itemize}
 
-\item{\texttt{let-in}:}
+\item{Käyttämällä \texttt{let-in}-lauseketta:}
 \begin{minted}{haskell}
-yearsToSeconds years = let secondsInAHour = 60 * 60
-                           hoursInAYear = 24 * 365
-          in years * hoursInAYear * secondsInAHour
+vuodetSekunneiksi vuodet = let
+    paivat = 365 * vuodet
+    hours = 24 * paivat
+  in 3600 * hours
 \end{minted}
 
-\item{\texttt{where}:}
+\item{Käyttämällä \texttt{where}-apumäärittelyä:}
 \begin{minted}{haskell}
-yearsToSeconds = years * hoursInAYear * secondsInAHour
-    where secondsInAHour = 60 * 60
-          hoursInAYear = 24 * 365
+vuodetSekunneiksi vuodet = tunnit * 3600
+  where paivat = 365 * vuodet
+        tunnit = 24 * paivat
 \end{minted}
 
 \end{itemize}
@@ -106,7 +178,7 @@ yearsToSeconds = years * hoursInAYear * secondsInAHour
 \begin{frame}[fragile]
 \frametitle{Kontrollirakenteita -- silmukat... NOT}
 \begin{itemize}
-\item{Koska muuttujan arvoa ei voi muuttaa, \mbox{\texttt{for(i = 0; i < n; i++)}}-silmukka ei mielekäs}
+\item{Koska muuttujan arvoa ei voi muuttaa, Java-tyylinen \mbox{\texttt{for(i = 0; i < n; i++)}}-silmukka ei mielekäs}
 \item{Haskellissa ei silmukkarakenteita ollenkaan, vaan käytettävä rekursiota}
 \item{Esimerkiksi kertoman laskeminen:}
 \begin{minted}{haskell}
@@ -131,8 +203,8 @@ factorial n | n == 0    = 1
 \item{Kääntäjäoptimoinnit voivat muuntaa häntärekursion silmukaksi konekieltä generoitaessa}
 \begin{minted}{haskell}
 factorial n = fac' n 1
-where fac' n acc | n == 0    = acc
-                 | otherwise = fac' (n - 1) (n * acc)
+  where fac' n acc | n == 0    = acc
+                   | otherwise = fac' (n - 1) (n * acc)
 \end{minted}
 \end{itemize}
 \end{frame}
@@ -153,7 +225,7 @@ fibonacci n = case n of
 
 \item{Vertailu ylhäältä alas}
 \item{Ajonaikainen virhe jos minkään hahmon sovitus ei onnistu}
-\item{Palauttaa arvon, kuten \texttt{if}}
+% \item{Palauttaa arvon, kuten \texttt{if}}
 
 \end{itemize}
 \end{frame}
@@ -188,7 +260,7 @@ fibonacci n = fibonacci (n - 1) + fibonacci (n - 2)
 \item{\texttt{String} on sama kuin \texttt{[Char]}}
 
 \begin{minted}{haskell}
-luvut = [1, 2] ++ [3, 4]         -- [1, 2, 3, 4]
+luvut = [1, 2, 3, 4]                -- [1, 2, 3, 4]
 mjono1 = "foobar"                       -- "foobar"
 mjono2 = ['f', 'o', 'o', 'b', 'a', 'r'] -- "foobar"
 \end{minted}
@@ -201,7 +273,7 @@ mjono2 = ['f', 'o', 'o', 'b', 'a', 'r'] -- "foobar"
 
 \begin{itemize}
 
-\item{Joitakin operaattoreita ja funktioita:}
+\item{Joitakin operaattoreita ja funktioita listoille:}
 \begin{minted}{haskell}
 length :: [a] -> Int        -- pituus
 (++) :: [a] -> [a] -> [a]   -- konkatenaatio
@@ -214,41 +286,18 @@ length :: [a] -> Int        -- pituus
 \begin{minted}{haskell}
 luvut = [1, 2] ++ [3, 4]         -- [1, 2, 3, 4]
 lukujenPituus = length luvut     -- 4
-tokaKirjain = mjono !! 1         -- 'o'
+tokaKirjain = "foo" !! 1         -- 'o'
 \end{minted}
 
 \end{itemize}
 
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{Listojen rakenne}
-\begin{itemize}
-\item{Listasolmun toteutus Javassa näyttää esim. tältä:}
-\begin{minted}{java}
-class ListNode<T> {
-    public T value;
-    public ListNode<T> next;
-}
-\end{minted}
-
-\item{Haskellissa listasolmun luominen tapahtuu nk. cons-operaattorilla \texttt{:}}
-\begin{minted}{haskell}
-(:) :: a -> [a] -> [a]
-\end{minted}
-
-\item{\texttt{:} voidaan mieltää operaattorina, joka lisää yhden alkion olemassaolevan listan alkuun}
-\begin{minted}{haskell}
-[1, 2, 3] == 1:2:3:[] == 1:(2:(3:[]))
-\end{minted}
-\end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]
 \frametitle{Listojen läpikäynti}
 
 \begin{itemize}
-\item{Yksi tapaa tapa on käyttää seuraavia funktioita}
+\item{Yksi tapa on käyttää seuraavia funktioita}
 \begin{minted}{haskell}
 null :: [x] -> Bool    -- kertoo onko lista tyhja
 head :: [x] -> x       -- palauttaa ensimmaisen alkion
@@ -261,42 +310,88 @@ head [1, 2, 3] == 1
 tail [1, 2, 3] == [2, 3]
 \end{minted}
 
-\item{Edellisten funktioiden avulla voidaan käyttää seuraavasti:}
+\item{Edellisten funktioiden avulla voidaan toteuttaa esimerkiksi:}
 \begin{minted}{haskell}
 length list | null list = 0
             | otherwise = 1 + length (tail list)
 
-containsElement list element
+containsZero :: [Integer] -> Bool
+containsZero list
     | null list = False
-    | head list == element = True
-    | otherwise = containsElement (tail list) element
+    | head list == 0 = True
+    | otherwise = containsZero (tail list)
 \end{minted}
 \end{itemize}
 
 \end{frame}
 
+
+\begin{frame}[fragile]
+\frametitle{Listojen rakenne}
+\begin{itemize}
+\item{Listasolmun toteutus Javassa näyttää esim. tältä:}
+\begin{minted}{java}
+class ListNode<T> {
+    public T value;
+    public ListNode<T> next;
+}
+\end{minted}
+
+\item{Haskellissa listasolmun luominen tapahtuu nk. \emph{cons}-operaattorilla \texttt{:}}
+\begin{minted}{haskell}
+(:) :: a -> [a] -> [a]
+\end{minted}
+
+\item{\texttt{:} voidaan mieltää operaattorina, joka lisää yhden alkion olemassaolevan listan alkuun}
+\begin{minted}{haskell}
+[1, 2, 3] == 1:2:3:[] == 1:(2:(3:[]))
+\end{minted}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Esimerkki listojen rakentamisesta}
+
+\begin{itemize}
+
+\item{Standardikirjastosta löytyy funktio \texttt{replicate :: Int -> a -> [a]}, joka toimii näin:}
+\begin{minted}{haskell}
+replicate 5 'A' == "AAAAA"
+replicate 3 1   == [1, 1, 1]
+\end{minted}
+
+\item{Toteutetaan esimerkin vuoksi \texttt{replicate} itse:}
+\begin{minted}{haskell}
+replicate :: Int -> a -> [a]
+replicate 0 _ = []
+replicate n x = x : replicate (n - 1) x
+\end{minted}
+
+\end{itemize}
+\end{frame}
+
 \begin{frame}[fragile]
 \frametitle{Listojen hahmonsovitus}
 \begin{itemize}
+\item{Edellisillä sivuilla määriteltiin \texttt{length} ja \texttt{containsZero} seuraavasti:}
 \begin{minted}{haskell}
 length list | null list = 0
             | otherwise = 1 + length (tail list)
 
-containsElement list element
+containsZero list
     | null list = False
-    | head list == element = True
-    | otherwise = containsElement (tail list) element
+    | head list == 0 = True
+    | otherwise = containsZero (tail list)
 \end{minted}
-\item{Edelliset funktiot voi kirjoittaa lyhyemminkin}
-\item{\texttt{:}-operaattoria voi nimittäin käyttää hahmonsovituksessa}
+\item{\texttt{:}-operaattorilla on toinenkin merkitys, kuin uuden listan luominen}
+\item{Sitä voi käyttää myös listan ``purkamiseen'' hahmonsovituksessa:}
 \begin{minted}{haskell}
 length []     = 0
 length (_:xs) = 1 + length xs
 
-containsElement [] _ = False
-containsElement (x:xs) element
-    | x == element = True
-    | otherwise = containsElement xs element
+containsZero [] = False
+containsZero (0:xs) = True
+containsZero (_:xs) = containsZero xs
 \end{minted}
 
 \end{itemize}
@@ -306,8 +401,8 @@ containsElement (x:xs) element
 \frametitle{Funktionaalista ohjelmointia listoilla}
 \begin{itemize}
 \item{Haskellissa funktiot ovat arvoja (functions as first-class values)}
-\item{Funktioita voi sijoittaa muuttujiin, antaa funktion parametreinä, palauttaa yms.}
-\item{Monet listafunktiot ottavat funktioita parametrinä, tunnetuimpina:}
+\item{Funktioita voi sijoittaa muuttujiin, antaa funktion parametreinä, palauttaa jne.}
+\item{Monet listafunktiot ottavat funktioita parametrina, tunnetuimpina:}
 \begin{minted}{haskell}
 map :: (a -> b) -> [a] -> [b]
 filter :: (a -> Bool) -> [a] -> [a]
@@ -326,6 +421,7 @@ onlyPositives = filter isPositive [2, -4, 8, -16, -32]
 
 \end{itemize}
 \end{frame}
+
 
 \begin{frame}[fragile]
 \frametitle{Anonyymit funktiot}
@@ -362,7 +458,7 @@ addTen = makeAdder 10
 fifteen = addTen 5      -- 15
 \end{minted}
 
-\item{Vielä esimerkki funktion parametrinä ottavasta funktiosta:}
+\item{Vielä esimerkki funktion parametrina ottavasta funktiosta:}
 \begin{minted}{haskell}
 callTwice :: (a -> a) -> a -> a
 callTwice f x = f (f x)
@@ -370,6 +466,160 @@ callTwice f x = f (f x)
 twentyFive = callTwice addTen 5    -- 25
 \end{minted}
 
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Monikot}
+\begin{itemize}
+\item{Monikon (tuple) avulla voidaan näppärästi koota vakiomäärä erityyppisiä arvoja yhdeksi arvoksi}
+
+\item{Esimerkkejä monikon luovista lausekkeista ja niiden tyypeistä:}
+\begin{center}
+    \begin{tabular}[H]{l|l}
+        lauseke                  &   tyyppi         \\
+        \hline
+        \texttt{(1, "yksi")}     &   \texttt{(Integer, String)}        \\
+        \texttt{(0.0, 0.0)}      &   \texttt{(Double, Double)} \\
+        \texttt{(1.0, 0.0, 0.0)} &   \texttt{(Double, Double, Double)} \\
+    \end{tabular}
+\end{center}
+
+\item{Monikoita voi hahmonsovittaa samalla syntaksilla kuin niitä luodaan:}
+\begin{minted}{haskell}
+fst :: (a, b) -> a
+fst (a, b) = a
+\end{minted}
+
+\item{Yksi yleinen käyttötapaus on funktio, jolla on monta paluuarvoa.}
+\begin{itemize}
+\item{Esimerkiksi standardikirjastosta löytyy \texttt{splitAt}:}
+\begin{minted}{haskell}
+splitAt :: Int -> [a] -> ([a], [a])
+\end{minted}
+\item{Esimerkki \texttt{splitAt}:in käytöstä:}
+\begin{minted}{haskell}
+splitAt 3 "foobar" == ("foo", "bar")
+\end{minted}
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Omien tietotyyppien luominen}
+\begin{itemize}
+\item{Haskellin tietotyypit ovat kuin Javan \texttt{enum}ien ja luokkien yhdistelmä}
+\item{Tutkitaan ensin seuraavaa Javan \texttt{enum}-määrittelyä:}
+\begin{minted}{java}
+enum Color {
+    Red, Green, Blue
+}
+\end{minted}
+\item{Vastaava Haskellissa:}
+\begin{minted}{haskell}
+data Color = Red | Green | Blue
+\end{minted}
+\item{Edeltävä määrittää tyypin \texttt{Color} ja sille \emph{konstruktorit} \texttt{Red}, \texttt{Green} ja \texttt{Blue}.}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Omien tietotyyppien luominen -- \texttt{enum}in vastine}
+\begin{itemize}
+
+\item{Konstruktoreita voi käyttää hahmonsovituksessa:}
+\begin{minted}{haskell}
+toHex :: Color -> String
+toHex Red   = "#ff0000"
+toHex Green = "#00ff00"
+toHex Blue  = "#0000ff"
+\end{minted}
+\item{Konstruktoreiin viitataan sen nimellä}
+\begin{minted}{haskell}
+css = "body { color: " ++ toHex Green ++ "; }"
+   == "body { color: #00ff00; }"
+\end{minted}
+\item{Huomaa kirjainkoko!}
+\begin{minted}{haskell}
+isEvilColor Red = True
+isEvilColor _   = False
+
+isEvilColor red = True
+isEvilColor _   = False
+\end{minted}
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Omien tietotyyppien luominen -- luokan vastine}
+\begin{itemize}
+\item{Tarkastellaan seuraavaa \text{Person}-luokkaa, jolla on kentät \texttt{name} ja \texttt{age}:}
+\begin{minted}{java}
+class Person {
+    public String name;
+    public int age;
+}
+\end{minted}
+\item{Haskellin vastine:}
+\begin{minted}{haskell}
+data Person = Person String Integer
+\end{minted}
+\item{Edellinen luo tyypin \texttt{Person}, jolla on 2-parametrinen konstruktori \texttt{Person}.}
+\item{\texttt{Person}-konstruktorin voi mieltää olevan funktio tyyppiä \mbox{\texttt{String -> Integer -> Person}}, jonka avulla luodaan \texttt{Person}-tyyppisiä arvoja:}
+\begin{minted}{haskell}
+lisa = Person "Lisa Simpson" 8
+bart = Person "Bart Simpson" 10
+\end{minted}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Omien tietotyyppien luominen -- luokan vastine}
+\begin{itemize}
+\item{Edellisellä kalvolla määriteltiin siis:}
+\begin{minted}{haskell}
+data Person = Person String Integer
+lisa = Person "Lisa Simpson" 8
+bart = Person "Bart Simpson" 10
+\end{minted}
+
+\item{\texttt{Person}-tyyppisestä arvon kentät voi lukea hahmonsovittamalla \texttt{Person}-konstruktoria}.
+\item{Esimerkiksi Java-tyyliset getterit voisi määritellä näin:}
+\begin{minted}{haskell}
+getName :: Person -> String
+getName (Person n _) = n
+
+getAge :: Person -> Integer
+getAge (Person _ age) = age
+
+bartsName = getName bart    -- "Bart Simpson"
+lisasAge = getAge lisa      -- 10
+\end{minted}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Omien tietotyyppien luominen -- luokka ja enum yhdessä}
+\begin{itemize}
+\item{Yhdistämällä kaksi edellistä tekniikkaa voidaan luoda esim. seuraavanlainen tietotyyppi pelikortille:}
+\begin{minted}{haskell}
+data Maa = Hertta | Ruutu | Risti | Pata
+data Kortti = Jokeri
+            | Kuvakortti   Maa Char
+            | Numerokortti Maa Integer
+
+pisteytaKortti :: Kortti -> Integer
+pisteytaKortti Jokeri = 1000
+pisteytaKortti (Numerokortti _ arvo) = arvo
+pisteytaKortti (Kuvakortti _ kirjain) = case kirjain of
+                                            'J' -> 11
+                                            'Q' -> 12
+                                            'K' -> 13
+                                            'A' -> 14
+\end{minted}
+\item{Edellä esiteltiin tyyppi \texttt{Kortti}, jolla on useita konstruktoreita, joista jokainen konstruktori oli eri tyyppiä.}
 \end{itemize}
 \end{frame}
 
@@ -469,6 +719,8 @@ False && False = False
 \end{itemize}
 \end{frame}
 
+%\end{comment}
+
 \begin{frame}[fragile]
 \frametitle{Template Haskell}
 \begin{itemize}
@@ -508,7 +760,64 @@ main = do
 \end{itemize}
 \end{frame}
 
-\end{comment}
+\begin{frame}[fragile]
+\frametitle{Template Haskellin tietorakenteita}
+\scriptsize
+\begin{itemize}
+\begin{minted}{haskell}
+data Lit = CharL Char
+         | StringL String
+         | IntegerL Integer
+         | RationalL Rational
+
+data Pat
+  = LitP Lit            -- vakion hahmo: 'a', 42 jne.
+  | VarP Name           -- muuttujan hahmo: esim. x
+  | TupP [Pat]          -- monikon hahmo: esim. (p1, p2)
+  | ConP Name [Pat]     -- tyyppikonstruktorin hahmo: Ctor p1 p2
+  | WildP               -- wildcard-hahmo: _
+
+data Exp
+  = VarE Name           -- muuttujannimi: esim. foo
+  | ConE Name           -- tyyppikonstruktori: esim. True
+  | LitE Lit            -- vakio: esim. 'a', 42 tai "mjono"
+  | AppE Exp Exp        -- funktiokutsu: esim. f x
+
+  | ParensE Exp         -- lauseke suluissa: esim. (x)
+  | LamE [Pat] Exp      -- anonyymi funktio: \ p1 p2 -> e
+  | TupE [Exp]          -- monikon muodostus: esim. (e1, e2)
+  | CondE Exp Exp Exp   -- ehtolauseke: if e1 then e2 else e3
+  | LetE [Dec] Exp      -- muuttujan maaritys: let x=e1; y=e2... in e3
+  | CaseE Exp [Match]   -- case-lauseke: case e of m1; m2
+\end{minted}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Syntaksipuuliteraalit}
+\begin{itemize}
+\item{Jo yksinkertaisenkin lausekkeen AST-puu on varsin monimutkainen.}
+\item{Esim:}
+\begin{minted}{haskell}
+\x -> if x < 0 then -x else x
+\end{minted}
+\item{Edeltävän lausekkeen syntaksipuun rakentamiseen tarvittava koodi näyttää tältä:}
+\begin{minted}{haskell}
+LamE [VarP (mkName "x")]
+     (CondE
+        (InfixE (Just (VarE (mkName "x")))
+                (VarE (mkName "<")
+                (Just (LitE (IntegerL 0))))
+        (AppE (VarE (mkName "negate")) (VarE (mkName "x")))
+        (VarE (mkName "x")))
+\end{minted}
+\item{Template Haskell tarjoaa kuitenkin \emph{quasiquote}-ominaisuuden, jolla
+    edeltävä AST voidaan ilmaista lyhyesti:}
+\begin{minted}{haskell}
+[| \x -> if x < 0 then -x else x |]
+\end{minted}
+\end{itemize}
+\end{frame}
 
 \begin{frame}[fragile]
 \frametitle{Laajempi TH-esimerkki: \texttt{zip$n$}-funktioiden generointi}
@@ -562,7 +871,98 @@ zip3 l1 l2 l3 = if or [null l1, null l2, null l3]
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{Laajempi TH-esimerkki: \texttt{zip$n$}-funktioiden generointi}
+\frametitle{Laajempi TH-esimerkki: \texttt{zip$n$}-funktioiden generointi (1/5)}
+% \fontsize{6pt}{7.2}\selectfont
+\footnotesize
+\begin{minted}{haskell}
+makeZip :: Int -> Q Dec
+makeZip arity = let
+  functionName = mkName (if arity == 2 then "zip" else "zip" ++ show arity)
+  varNames = map (\i -> mkName ("l" ++ show i)) [1..arity]
+
+  ...
+  ...
+  ...
+  ...
+
+  body = runQ [| if or ...
+                    then []
+                    else ... : ... |]
+
+  ...
+      in ...
+\end{minted}
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+\begin{minted}{haskell}
+zip l1 l2 = if or [null l1, null l2]
+    then []
+    else (head l1, head l2) : zip (tail l1) (tail l2)
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Laajempi TH-esimerkki: \texttt{zip$n$}-funktioiden generointi (2/5)}
+% \fontsize{6pt}{7.2}\selectfont
+\footnotesize
+\begin{minted}{haskell}
+makeZip :: Int -> Q Dec
+makeZip arity = let
+  functionName = mkName (if arity == 2 then "zip" else "zip" ++ show arity)
+  varNames = map (\i -> mkName ("l" ++ show i)) [1..arity]
+
+  isEmptyExprs = listE (map (\v -> [| null $(varE v) |]) varNames)
+  ...
+  ...
+  ...
+
+  body = runQ [| if or $(isEmptyExprs)
+                    then []
+                    else ... : ... |]
+
+  ...
+      in ...
+\end{minted}
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+\begin{minted}{haskell}
+zip l1 l2 = if or [null l1, null l2]
+    then []
+    else (head l1, head l2) : zip (tail l1) (tail l2)
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Laajempi TH-esimerkki: \texttt{zip$n$}-funktioiden generointi (3/5)}
+% \fontsize{6pt}{7.2}\selectfont
+\footnotesize
+\begin{minted}{haskell}
+makeZip :: Int -> Q Dec
+makeZip arity = let
+  functionName = mkName (if arity == 2 then "zip" else "zip" ++ show arity)
+  varNames = map (\i -> mkName ("l" ++ show i)) [1..arity]
+
+  isEmptyExprs = listE (map (\v -> [| null $(varE v) |]) varNames)
+  tupleExpr = tupE (map (\v -> [| head $(varE v) |]) varNames)
+  ...
+  ...
+
+  body = runQ [| if or $(isEmptyExprs)
+                    then []
+                    else $(tupleExpr) : ... |]
+
+  ...
+      in ...
+\end{minted}
+
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+\begin{minted}{haskell}
+zip l1 l2 = if or [null l1, null l2]
+    then []
+    else (head l1, head l2) : zip (tail l1) (tail l2)
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Laajempi TH-esimerkki: \texttt{zip$n$}-funktioiden generointi (4/5)}
 % \fontsize{6pt}{7.2}\selectfont
 \footnotesize
 \begin{minted}{haskell}
@@ -580,13 +980,67 @@ makeZip arity = let
                     then []
                     else $(tupleExpr) : $(recursiveCallExpr) |]
 
-  declaration = funD functionName
-      [clause
-          (map varP varNames)
-          (normalB body)
-          []]
-      in runQ declaration
+  ...
+      in ...
 \end{minted}
+
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+\begin{minted}{haskell}
+zip l1 l2 = if or [null l1, null l2]
+    then []
+    else (head l1, head l2) : zip (tail l1) (tail l2)
+\end{minted}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Laajempi TH-esimerkki: \texttt{zip$n$}-funktioiden generointi (5/5)}
+% \fontsize{6pt}{7.2}\selectfont
+\footnotesize
+\begin{minted}{haskell}
+makeZip :: Int -> Q Dec
+makeZip arity = let
+  functionName = mkName (if arity == 2 then "zip" else "zip" ++ show arity)
+  varNames = map (\i -> mkName ("l" ++ show i)) [1..arity]
+
+  isEmptyExprs = listE (map (\v -> [| null $(varE v) |]) varNames)
+  tupleExpr = tupE (map (\v -> [| head $(varE v) |]) varNames)
+  recursiveCallExpr = appsE (varE functionName :
+                                map (\v -> [| tail $(varE v) |]) varNames)
+
+  body = runQ [| if or $(isEmptyExprs)
+                    then []
+                    else $(tupleExpr) : $(recursiveCallExpr) |]
+
+  clauses = [clause (map varP varNames) (normalB body) []]
+      in runQ (funD functionName clauses)
+\end{minted}
+
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+\begin{minted}{haskell}
+zip l1 l2 = if or [null l1, null l2]
+    then []
+    else (head l1, head l2) : zip (tail l1) (tail l2)
+\end{minted}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Laajempi TH-esimerkki: \texttt{zip$n$}-funktioiden generointi}
+\begin{itemize}
+\item{Vielä lopuksi edellisissä kalvoissa esitetyn \texttt{makeZip}-funktion käyttö:}
+\begin{minted}{haskell}
+{-# LANGUAGE TemplateHaskell #-}
+import MakeZip(makeZip)
+
+$(mapM makeZip [4..20])
+main = print (zip6 [1] ['a'] ["b"] [4] [5] [6, 7])
+\end{minted}
+\item{Ohjelma tulostaa:}
+\begin{minted}{haskell}
+[(1,'a',"b",4,5,6)]
+\end{minted}
+\end{itemize}
 \end{frame}
 
 \end{document}

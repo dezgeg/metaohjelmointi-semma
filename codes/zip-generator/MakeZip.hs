@@ -17,9 +17,5 @@ makeZip arity = let
                     then []
                     else $(tupleExpr) : $(recursiveCallExpr) |]
 
-  declaration = funD functionName
-      [clause
-          (map varP varNames)
-          (normalB body)
-          []]
-      in runQ declaration
+  clauses = [clause (map varP varNames) (normalB body) []]
+      in runQ (funD functionName clauses)
