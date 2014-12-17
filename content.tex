@@ -213,7 +213,12 @@ divides m n = n `mod` m == 0
 
 Toisin kuin monissa muissa operaattoreille infiksisyntaksia käyttävissä ohjelmointikielissä,
 Haskellissa käytettävissä olevia operaattoreita ei ole erikseen kovakoodattu kieleen,
-vaan ohjelmoija voi itse määritellä mielivaltaisia operaattoreita.
+vaan ohjelmoija voi itse määritellä mielivaltaisia operaattoreita,
+ja operaattoreiden sidontajärjestys on myös ohjelmoijan valittavissa.
+Operaattorin määritys avainsanoilla \Haskell{infixl}, \Haskell{infixr} ja \Haskell{infix} määritellään sekä
+operaattoreiden suhteellinen prioriteetti (kokonaislukuna 0--9, pienempi sitoo tiukemmin) että
+samanprioriteettisten operaattoreiden laskemissuunta
+(vasemmalta oikealle, oikealta vasemmalle tai ei sallittu).
 
 \begin{listing}[H]
 \begin{minted}{haskell}
@@ -228,15 +233,11 @@ infixl 7 .*
 
 Listauksessa \ref{lst:operators-example} määritellään kaksiuloitteisen vektorin yhteenlaskua
 ja skalaarilla kertomista vastaavat operaattorit \Haskell{<+>} ja \Haskell{.*}.
-Myös operaattoreiden sidontajärjestys on ohjelmoijan valittavissa;
-avainsanoilla \Haskell{infixl}, \Haskell{infixr} ja \Haskell{infix} määritellään sekä
-operaattoreiden suhteellinen prioriteetti (kokonaislukuna 0--9, pienempi sitoo tiukemmin) että
-samanprioriteettisten operaattoreiden laskemissuunta
-(vasemmalta oikealle, oikealta vasemmalle tai ei sallittu).
 Siis listauksen \ref{lst:operators-example} operaattoreita käyttäen olisi lauseke
 \Haskell{(1, 2) <+> 3 .* (4, 5)} tulkittavissa perinteisten matemaattisten operaattorien tapaan,
 eli \Haskell{(1, 2) <+> (3 .* (4, 5))}.
 
+\iffalse
 \subsection{Funktioiden lähempää tarkastelua}
 Kuten aiemmissa luvuissa on nähty,
 Haskellin funktiotyypin ja funktiokutsun syntaksi poikkeaa paljon muista ohjelmointikielistä.
@@ -305,6 +306,7 @@ Tämän avulla voidaan \Haskell{filterPositives}-esimerkkiä lyhentää vielä l
 filterPositives :: [Int] -> [Int]
 filterPositives = filter (>0)
 \end{minted}
+\fi
 
 \subsection{Laiskuus}
 
