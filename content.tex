@@ -1,8 +1,6 @@
-\section{Johdanto}
 \section{Haskell}
-\subsection{Yleistä}
+\subsection{Johdanto}
 Haskell on staattisesti- ja vahvasti tyypitetty laiska, puhtaasti funktionaalinen ohjelmointikieli.
-
 Haskell-kielen suunnittelu ja kehitys alkoi vuonna 1987,
 jolloin päämääränä oli tuoda lukuisten, hyvin samankaltaisten laiskojen puhtaasti funktionaalisten tutkimuskielien ideat yhteen.
 Tällä hetkellä kielen uusin spesifikaatio ``Haskell Language Report'' on vuodelta 2010~\cite{HaskellReport2010}.
@@ -70,45 +68,38 @@ henkilonKuvaus ika = if ika < 18
                         else "Aikuinen"
 luvunKuvaus n = "Luku on " ++ (if n < 0 then "negatiivinen" else "positiivinen")
 \end{minted}
-
 Useamman kuin yhden ehdon vertailulle on oma syntaksinsa.
-
 \begin{minted}{haskell}
 fizzbuzz n | n % 15 == 0 = "FizzBuzz"
            | n % 3  == 0 = "Fizz"
            | n % 5  == 0 = "Buzz"
            | otherwise   = show n
 \end{minted}
-
 Koska Haskell on puhtaasti funktionaalinen ohjelmointikieli,
 ei muuttujan arvon muuttaminen ole mahdollista.
 Näin ollen kielessä ei myöskään ole ollenkaan silmukoita kontrollirakenteina,
 vaan niiden tilalla on käytettävä rekursiota.
 Esimerkiksi kertomafunktio voitaisiin toteuttaa seuraavasti:
-
 \begin{minted}{haskell}
 factorial n | n == 0    = 1
             | otherwise = n * factorial (n - 1)
 \end{minted}
-
 Kun käytetään rekursiota silmukan korvikkeena,
 on oltava tarkkana rekursiokutsujen viemän pinokehyksien tilamäärän kanssa.
-Esimerkiksi edellisen esimerkin \Haskell{factorial}-funktio on epätehoton ja käyttää lineaarisen määrän muistia.
+Esimerkiksi edellisen esimerkin \Haskell{factorial}-funktio on tehoton ja käyttää lineaarisen määrän muistia.
 Monet rekursiiviset funktiot on kuitenkin apufunktion avulla mahdollista kirjoittaa siten,
 että ne käyttävät vakiomäärän muistia.
 Koska tällaisia apufunktion vaativia tilanteita tulee Haskellissa vastaan usein,
 voi \Haskell{where}-avainsanalla tehdä paikallisia muuttujien- ja funktioiden määrittelyjä.
-
 \begin{minted}{haskell}
 factorial n = fac' n 1
     where fac' n acc | n == 0    = acc
                      | otherwise = fac' (n - 1) (n * acc)
 \end{minted}
-
 Edellisessä esimerkissä funktion \Haskell{fac'} näkyvyys on ainoastaan \Haskell{factorial}-funktion sisällä.
 
 \subsection{Hahmonsovitus}
-Hahmonsovituksen (pattern matching) voidaan katsoa olevan laajennettu versio esimerkiksi javan \texttt{switch}-lauseesta.
+Hahmonsovituksen (pattern matching) voidaan katsoa olevan laajennettu versio esimerkiksi Javan \texttt{switch}-lauseesta.
 Eräs tapa käyttää hahmonsovitusta Haskellissa on \Haskell{case}-lauseke:
 \begin{minted}{haskell}
 fibonacci n = case n of
@@ -167,11 +158,17 @@ containsElement (x:xs) elem | x == elem = True
 \subsection{Anonyymit funktiot}
 Anonyymi funktio muodostetaan kenoviivalla (\texttt{\textbackslash}), jota seuraa
 parametrilista, nuoli (\texttt{->}), ja lopuksi funktion runko.
-Semanttisesti anonyymien funktioiden ja tavallisten funktioiden välillä ei ole mitään eroa.
+Semanttisesti anonyymien funktioiden ja tavallisten funktioiden välillä ei ole mitään eroa:
+niiden tyyppit ovat samat ja niitä kutsutaan samalla syntaksilla (mikä ei päde esimerkiksi Ruby-kielessä).
 \begin{minted}{haskell}
-square = \x -> x * x
+squareFunction :: Int -> Int
+squareFunction x = x * x
 
-fiveSquared = square 5 -- => 25
+squareLambda :: Int -> Int  -- sama tyyppi
+squareLambda = \x -> x * x
+
+fiveSquaredWithFunction = squareFunction 5 -- => 25
+fiveSquaredWithLambda = squareLambda 5     -- => 25
 \end{minted}
 Haskellissa funktiot ovat tavallisia arvoja (functions as first-class values);
 niitä voi esimerkiksi antaa funktion parametreinä sekä palauttaa funktioista.
@@ -236,8 +233,6 @@ fst (a, _) = a
 \end{minted}
 Esimerkki \Haskell{Double}-kolmikon käytöstä kolmiuloitteisena vektorina:
 \begin{minted}{haskell}
-type Vector3 = (Double, Double, Double)
-crossProduct :: Vector3 -> Vector3 -> Vector3
 crossProduct (x1, y1, z1) (x2, y2, z2) = (y1 * z2 - y2 * z1,
                                           z1 * x2 - z2 * x1,
                                           x1 * y2 - x2 * y1)
@@ -308,7 +303,7 @@ Haskellissa vastaava tietotyyppi voidaan kenttien nimiä lukuunottamatta määri
 data Person = Person String Integer
 \end{minted}
 Edeltävä \texttt{data}-määrittely tyypin \texttt{Person}, jolla on 2-parametrinen konstruktori \texttt{Person}.
-\texttt{Person}-konstruktorin voi mieltää olevan funktio tyyppiä \Haskell{String -> Integer -> Person}, jonka avulla luodaan \texttt{Person}-tyyppisiä arvoja:
+\texttt{Person}-konstruktorin voi mieltää olevan funktio tyyppiä\\ \Haskell{String -> Integer -> Person}, jonka avulla luodaan \texttt{Person}-tyyppisiä arvoja:
 \begin{minted}{haskell}
 lisa = Person "Lisa Simpson" 8
 bart = Person "Bart Simpson" 10
@@ -373,8 +368,8 @@ pisteytaKortti (Kuvakortti _ kirjain) = case kirjain of
 pataAssa = Kuvakortti Pata 'A'
 ristiKakkonen = Numerokortti Risti 2
 main = do
-    print (pisteytaKortti pataAssa > pisteytaKortti ristiKakkonen)  -- 14 > 2, True
-    print (pisteytaKortti pataAssa > pisteytaKortti Jokeri)         -- 14 > 1000, False
+  print (pisteytaKortti pataAssa > pisteytaKortti ristiKakkonen) -- True
+  print (pisteytaKortti pataAssa > pisteytaKortti Jokeri)        -- False
 \end{minted}
 Tällaista \Haskell{enum}in ja luokan yhdistelmää kutsutaan algebralliseksi tietotyypiksi,
 joita Javasta ei siis löydy.
@@ -392,7 +387,7 @@ Haskellissa käytettävissä olevia operaattoreita ei ole erikseen kovakoodattu 
 vaan ohjelmoija voi itse määritellä mielivaltaisia operaattoreita,
 ja operaattoreiden sidontajärjestys on myös ohjelmoijan valittavissa.
 Operaattorin määritys avainsanoilla \Haskell{infixl}, \Haskell{infixr} ja \Haskell{infix} määritellään sekä
-operaattoreiden suhteellinen prioriteetti (kokonaislukuna 0--9, pienempi sitoo tiukemmin) että
+operaattoreiden suhteellinen prioriteetti (kokonaislukuna 0--9, suurempi sitoo tiukemmin) että
 samanprioriteettisten operaattoreiden laskemissuunta
 (vasemmalta oikealle, oikealta vasemmalle tai ei sallittu).
 
@@ -588,11 +583,11 @@ mää\-rit\-tele\-mäl\-lä nimet \Haskell{foo} ja \Haskell{bar} sen avulla.
 Makron käyttö tapahtuu dollarimerkkisyntaksilla \Haskell{\$(\emph{lauseke})},
 jossa \emph{lauseke} voi olla mielivaltaista Haskell-koodia.
 Koska dollarisyntaksi ja Template Haskell itsessään ei kuulu Haskell 2010-standardiin,
-on moduulin alkuun täytynyt laittaa pragma \Haskell{LANGUAGE TemplateHaskell}
+on moduulin alkuun täytynyt laittaa pragma \texttt{LANGUAGE} \texttt{TemplateHaskell}
 Template Haskell-laajennoksen sallimiseksi.
 
 Kääntäessä \Haskell{Main.hs}-moduulia voidaan havaita,
-että \Haskell{\$(compileTimeEval ...)}-lausekkeiden arvot todella lasketaan käännösaikana:
+että \Haskell{\$()}-lausekkeiden arvot todella lasketaan käännösaikana:
 ensin useita sekunteja kuluu lukujen 1--10 000 000 summan laskemiseen,
 sitten käännös päättyy virheeseen,
 koska makroekspansion aikana jaettiin nollalla.
@@ -659,7 +654,7 @@ data Exp
 Merkillepantavaa on,
 että Haskellin algebralliset tietotyypit sopivat erinomaisesti syntaksipuutyypin esittämiseen!
 Esimerkiksi Javassa lausekkeen tietotyypin määrittely vastaavasti vaatisi ensin abstraktin yliluokan \\
-\Haskell{abstract class Exp} sekä kasan aliluokkia \Haskell{class VarE extends Exp},
+\Haskell{abstract class Exp} sekä kasan aliluokkia \Haskell{class VarE extends Exp},\\
 \Haskell{class ConE extends Exp} jne.
 Erityisesti tässä tilanteessa Haskell-koodi onnistuu olemaan huomattavasti tiiviimpää kuin vastaava Java-koodi.
 
@@ -828,3 +823,12 @@ Ohjelma tulostaa:
 \end{minted}
 
 \section{Yhteenveto}
+Haskell on mielenkiintoinen ohjelmointikieli, joka poikkeaa todella merkittävästi Javasta
+ja muista vastaavista tutuista ja turvallisista imperatiivisista ohjelmointikielistä.
+Puhtaasti funktionaalinen paradigma pakottaa kirjoittamaan Haskell-ohjelmat usein
+eri tavalla kuin perinteisissä ohjelmointikielissä,
+mutta mahdollistaa samalla laiskan evaluaation ja sen tuomat edut.
+Omien operaattorien luomisen mahdollisuus vaatii kielen toteutukselta selvästi monimutkaisemman jäsentäjän,
+mutta tuo kieleen teoreettista puhtautta, sekä hyvät työkalut täsmäkielten luomiseen.
+Template Haskell-makrojärjestelmä tuo kieleen tehokkaan käännösaikaisen metaohjelmoinnin menetelmän,
+jonka eleganttiuden mahdollistaa algebrallisten tietotyyppien erinomainen soveltuvuus syntaksipuiden käsittelyyn.
