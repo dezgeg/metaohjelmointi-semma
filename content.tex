@@ -192,8 +192,8 @@ main = do
 \end{minted}
 Anonyymit funktiot ovat erityisen käytännöllisiä seuraavissa useimmin käytetyissä listaoperaatioissa:
 \begin{itemize}
-    \item \Haskell{map :: (a -> b) -> [a] -> [b]} - ottaa funktion ja listan, kutsuu annettua funktiota listan kaikille alkioille
-    \item \Haskell{filter :: (a -> Bool) -> [a] -> [a]} - ottaa predikaattifunktion ja listan, palauttaa listasta ne alkiot, joille predikaatti pätee
+    \item \Haskell{map :: (a -> b) -> [a] -> [b]} - ottaa funktion ja listan, kutsuu annettua funktiota listan kaikille alkioille.
+    \item \Haskell{filter :: (a -> Bool) -> [a] -> [a]} - ottaa predikaattifunktion ja listan, palauttaa listasta ne alkiot, joille predikaatti pätee.
 \end{itemize}
 \begin{minted}{haskell}
 -- kasvata jokaista lukua sadalla
@@ -203,6 +203,44 @@ map (toUpper) "Foo" -- => "FOO"
 -- valitse listasta vain b:lla alkavat sanat
 filter (\str -> str !! 0 == 'b') ["foo", "bar", "baz", "quux", "biff"]
     -- => ["bar", "baz", "biff"]
+\end{minted}
+
+\subsection{Monikot}
+Monikko (tuple) ovat Haskellin sisäänrakennettu tietotyyppi,
+jonka avulla voidaan koota vakiomäärä erityyppisiä arvoja yhdeksi arvoksi.
+Monikon tyyppi ilmaistaan erottamalla alkioiden tyypit pilkulla ja laittamalla sulkeet ympärille;
+vastaavasti monikon luominen erottamalla alkioina olevat arvot pilkulla ja laittamalla sulkeet ympärille.
+\begin{center}
+    \begin{tabular}[H]{l|l}
+        lauseke                  &   tyyppi         \\
+        \hline
+        \texttt{(1, "yksi")}     &   \texttt{(Integer, String)}        \\
+        \texttt{(0.0, 0.0)}      &   \texttt{(Double, Double)} \\
+        \texttt{(1.0, 0.0, 0.0)} &   \texttt{(Double, Double, Double)} \\
+    \end{tabular}
+\end{center}
+
+Monikon voi helposti sekoittaa listaan,
+mutta kuten edellisestä taulukosta näkee,
+on niillä keskeisiä eroja.
+Monikossa alkioiden lukumäärä on osa tyyppiä (ja siten tiedettävä käännösaikana),
+mutta monikoiden alkiot voivat olla erityyppisiä.
+
+Monikoita voi hahmonsovittaa samalla syntaksilla kuin niitä luodaan.
+Esimerkiksi standardikirjaston funktio \Haskell{fst},
+joka palauttaa parista (2-paikkainen monikko) ensimmäisen alkion,
+voidaan toteuttaa seuraavasti:
+\begin{minted}{haskell}
+fst :: (a, b) -> a
+fst (a, _) = a
+\end{minted}
+Esimerkki \Haskell{Double}-kolmikon käytöstä kolmiuloitteisena vektorina:
+\begin{minted}{haskell}
+type Vector3 = (Double, Double, Double)
+crossProduct :: Vector3 -> Vector3 -> Vector3
+crossProduct (x1, y1, z1) (x2, y2, z2) = (y1 * z2 - y2 * z1,
+                                          z1 * x2 - z2 * x1,
+                                          x1 * y2 - x2 * y1)
 \end{minted}
 
 \subsection{Operaattorit}
@@ -469,7 +507,7 @@ data Exp
 
 Merkillepantavaa on,
 että Haskellin algebralliset tietotyypit sopivat erinomaisesti syntaksipuutyypin esittämiseen!
-Esimerkiksi Javassa lausekkeen tietotyypin määrittely vastaavasti vaatisi ensin abstraktin yliluokan
+Esimerkiksi Javassa lausekkeen tietotyypin määrittely vastaavasti vaatisi ensin abstraktin yliluokan \\
 \Haskell{abstract class Exp} sekä kasan aliluokkia \Haskell{class VarE extends Exp},
 \Haskell{class ConE extends Exp} jne.
 Erityisesti tässä tilanteessa Haskell-koodi onnistuu olemaan huomattavasti tiiviimpää kuin vastaava Java-koodi.
@@ -562,6 +600,7 @@ zip3 l1 l2 l3 = if or [null l1, null l2, null l3]
 \Haskell{or}-funktio \Haskell{or :: [Bool] -> Bool} tekee loogisen TAI-operaation parametrilistan
 jokaiselle alkiolle,
 tai toisin sanottuna tarkastaa, onko jokin listan alkio \Haskell{True}.
+Funktio \Haskell{null :: [a] -> Bool} palauttaa totuusarvon, joka kertoo onko lista tyhjä vai ei.
 Siis jos mikä tahansa parametrilistoista on tyhjä, niin \Haskell{zip$N$}-funktion paluuarvo on tyhjä lista,
 muulloin luodaan monikko jokaisen parametrilistan ensimmäisestä alkiosta,
 ja liitetään se rekursiivisesti tehtyyn \Haskell{zip$N$}-kutsuun loppulistoille.
