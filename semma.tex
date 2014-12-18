@@ -61,7 +61,16 @@
 \date{\today}
 \level{Seminaarityö}
 \abstract{
-Abstract
+Haskell on staattisesti sekä vahvasti tyypitetty puhtaasti funktionaalinen ohjelmointikieli,
+joka eroaa varsin merkittävästi sekä syntaksin että konkreettisen käytön kannalta.
+Esimerkiksi puhtaasti funktionaalisen paradigman johdosta kielessä ei ole ollenkaan silmukoita,
+minkä johdosta monet esimerkiksi Javalle tai muulle perinteiselle ohjelmointikielelle kirjoitetut
+algoritmit täytyy toteuttaa Haskellissa täysin eri tavoin.
+GHC-kääntäjä tarjoaa Haskelliin laajennoksena Template Haskell-makrojärjestelmän,
+joka mahdollistaa Haskell-koodin ajamisen käännösaikana ja AST-pohjaisten makrojen toteuttamisen.
+
+Tässä seminaarityössä tutustutaan ensiksi Haskelliin ohjelmointikielenä,
+sekä käytännön makrojen toteuttamiseen Template Haskell-makrojärjestelmällä.
 }
 
 % The following can be used to specify keywords and classification of the paper:
@@ -94,6 +103,7 @@ Abstract
 
 \newcommand{\HaskellInput}[1]{\inputminted{haskell}{#1}}
 \newcommand{\Haskell}[1]{\mbox{\texttt{#1}}}
+\renewcommand{\lstlistingname}{Listaus}
 
 \begin{document}
 

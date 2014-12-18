@@ -5,12 +5,12 @@ Haskell on staattisesti- ja vahvasti tyypitetty laiska, puhtaasti funktionaaline
 
 Haskell-kielen suunnittelu ja kehitys alkoi vuonna 1987,
 jolloin päämääränä oli tuoda lukuisten, hyvin samankaltaisten laiskojen puhtaasti funktionaalisten tutkimuskielien ideat yhteen.
-Tällä hetkellä kielen uusin spesifikaatio ``Haskell Language Report'' on vuodelta 2010.~\cite{HaskellReport2010}.
+Tällä hetkellä kielen uusin spesifikaatio ``Haskell Language Report'' on vuodelta 2010~\cite{HaskellReport2010}.
 
 Aktiivisesti kehitettyjä sekä ajantasaisia Haskell-kääntäjiä on käytännössä ainoastaan
 GHC, Glasgow Haskell Compiler~\cite{GHC}.
 Itse kielen käyttäjiä varten julkaistaan säännöllisesti Linux-, Windows- ja
-Mac OS X-käyttöjärjestelmille  jakelupaketti ``Haskell Platform''~\cite{HaskellPlatform},
+Mac OS X-käyt\-tö\-jär\-jes\-tel\-mille  jakelupaketti ``Haskell Platform''~\cite{HaskellPlatform},
 joka sisältää GHC:n lisäksi kirjastoja esimerkiksi yksikkötestaukseen, POSIX-rajapintoihin
 sekä OpenGL:ään.
 
@@ -53,11 +53,11 @@ jonka lukualue on rajallinen (toteutuksesta riippuen, kuitenkin vähintään 30 
 sekä \Haskell{Integer},
 jonka lukualue on rajaton.
 Liukulukutyyppeinä löytyy \Haskell{Float} ja \Haskell{Double},
-jotka vastaavat lähes kaikkien muidenkin ohjelmointikielten käyttämiä IEEE 754-standardin mukaisia liukulukuja.
+jotka vastaavat lähes kaikkien muidenkin ohjelmointikielten käyttämiä IEEE~754- standardin mukaisia liukulukuja.
 Kaikille lukuliteraaleille syntaksi on samanlainen kuin Javassa.
 Totuusarvojen tyyppi on \Haskell{Bool},
 mutta yleisestä käytännöstä poiketen itse totuusarvot ovat \Haskell{True} ja \Haskell{False} isoilla alkukirjaimilla.
-Tälle erolle kirjainkoossa on itse syy; Haskellissa nimen ensimmäisen alkukirjaimen kirjainkoolla on merkitystä
+Tälle erolle kirjainkoossa on itse asiassa syy; Haskellissa nimen ensimmäisen alkukirjaimen kirjainkoolla on merkitystä
 ja sekä tyyppien että vakioiden nimien täytyy alkaa isolla alkukirjaimella.
 
 Useista imperatiivisista kielistä poiketen \Haskell{if-then-else}-konstruktio ei ole lause (statement),
@@ -82,7 +82,7 @@ fizzbuzz n | n % 15 == 0 = "FizzBuzz"
 
 Koska Haskell on puhtaasti funktionaalinen ohjelmointikieli,
 ei muuttujan arvon muuttaminen ole mahdollista.
-Näinollen kielessä ei myöskään ole ollenkaan silmukoita kontrollirakenteina,
+Näin ollen kielessä ei myöskään ole ollenkaan silmukoita kontrollirakenteina,
 vaan niiden tilalla on käytettävä rekursiota.
 Esimerkiksi kertomafunktio voitaisiin toteuttaa seuraavasti:
 
@@ -108,7 +108,7 @@ factorial n = fac' n 1
 Edellisessä esimerkissä funktion \Haskell{fac'} näkyvyys on ainoastaan \Haskell{factorial}-funktion sisällä.
 
 \subsection{Hahmonsovitus}
-Hahmonsovituksen (pattern matching) voidaan katsoa olevan laajennettu versio esim. javan \texttt{switch}-lauseesta.
+Hahmonsovituksen (pattern matching) voidaan katsoa olevan laajennettu versio esimerkiksi javan \texttt{switch}-lauseesta.
 Eräs tapa käyttää hahmonsovitusta Haskellissa on \Haskell{case}-lauseke:
 \begin{minted}{haskell}
 fibonacci n = case n of
@@ -117,7 +117,7 @@ fibonacci n = case n of
                 _ -> fibonacci (n - 1) + fibonacci (n - 2)
 \end{minted}
 Edellisessä esimerkissä parametriä \Haskell{n} verrataan järjestyksessa hahmoihin \Haskell{1}, \Haskell{2} ja \Haskell{\_},
-ja suoritus jatkuu siltä riviltä jolla vertailu onnistui.
+ja suoritus jatkuu siltä riviltä, jolla vertailu onnistui.
 Hahmo \Haskell{\_} on ``wildcard'' eli arvon vertailu hahmoon onnistuu aina.
 
 Koska hahmonsovitusta käytetään Haskellissa paljon, on sille lyhyempi syntaksi olemassa:
@@ -149,7 +149,7 @@ mjono2 = ['f', 'o', 'o'] -- tyyppi [Char], sama kuin mjono1
 Linkitetyn listan toteutus esimerkiksi Javassa on tyypillisesti solmuluokka,
 joka sisältää yhtenä kenttänä listan alkion ja toisena kenttänä viitteen seuraavaan solmuun.
 Haskellissa listasolmua vastaa nk. cons-operaattori \Haskell{:}, joka voidaan
-mieltää operaattorina joka lisää olemassaolevan listan alkuun yhden alkion.
+mieltää operaattorina joka lisää olemassa olevan listan alkuun yhden alkion.
 Esimerkiksi \Haskell{[1, 2, 3]} cons-operaattorin avulla ilmaistuna on \Haskell{1:2:3:[]},
 tai täysin sulutettuna \Haskell{1:(2:(3:[]))}.
 \Haskell{:}-operaattori on myös samalla \emph{tyyppikonstruktori},
@@ -174,7 +174,7 @@ square = \x -> x * x
 fiveSquared = square 5 -- => 25
 \end{minted}
 Haskellissa funktiot ovat tavallisia arvoja (functions as first-class values);
-niitä voi esim. antaa funktion parametreinä sekä palauttaa funktioista.
+niitä voi esimerkiksi antaa funktion parametreinä sekä palauttaa funktioista.
 Anonyymien funktioiden avulla sulkeumien luominen on mahdollista.
 
 \begin{minted}{haskell}
@@ -193,7 +193,7 @@ main = do
 Anonyymit funktiot ovat erityisen käytännöllisiä seuraavissa useimmin käytetyissä listaoperaatioissa:
 \begin{itemize}
     \item \Haskell{map :: (a -> b) -> [a] -> [b]} - ottaa funktion ja listan, kutsuu annettua funktiota listan kaikille alkioille
-    \item \Haskell{filter :: (a -> Bool) -> [a] -> [a]} - ottaa predikaattifunktion ja listan, palauttaa listasta ne alkiot joille predikaatti pätee
+    \item \Haskell{filter :: (a -> Bool) -> [a] -> [a]} - ottaa predikaattifunktion ja listan, palauttaa listasta ne alkiot, joille predikaatti pätee
 \end{itemize}
 \begin{minted}{haskell}
 -- kasvata jokaista lukua sadalla
@@ -311,7 +311,9 @@ filterPositives = filter (>0)
 \subsection{Laiskuus}
 
 Haskell on \emph{laiskasti evaluoitu} ohjelmointikieli,
-joka tarkoittaa että Haskellissa lausekkeen arvoa ei evaluoida ennen kuin sitä tarvitaan.
+joka tarkoittaa,
+että Haskellissa lausekkeen arvoa ei evaluoida,
+ennen kuin sitä tarvitaan.
 Seuraava ohjelmaesimerkki havainnollistaa asiaa:
 
 \begin{listing}[H]
@@ -334,7 +336,7 @@ eikä viimeistä tulostusta tapahdu.
 
 \subsection{Laiskuuden käyttötapauksia}
 
-Monissa ohjelmointikielissä (kuten Javassa) monet loogiset operaattorit käyttävät nk. short-circuit-evaluaatiota,
+Monissa ohjelmointikielissä (kuten Javassa) monet loogiset operaattorit käyttävät oikomuotoevaluaatiota (short-circuit evaluation),
 eli operaattorin oikeanpuolemmaista parametriä ei evaluoida tietyissä tilanteissa.
 Esimerkiksi seuraavassa esimerkissä tyhjä merkkijonoparametri funktiolla \texttt{startsWithDash} ei
 aiheuta \texttt{IndexOutOfBoundsException}-poikkeusta:
@@ -347,7 +349,7 @@ aiheuta \texttt{IndexOutOfBoundsException}-poikkeusta:
 
 Javassa vain sisäänrakennetuilla \texttt{||}- ja \texttt{\&\&}-operaattoreilla on tämä ominaisuus,
 eikä ohjelmoija voi mitenkään itse tehdä uutta operaattoria tai funktiota,
-joka käyttäisi short-circuit-evaluaatiota.
+joka käyttäisi oikomuotoevaluaatiota.
 Haskellissa sen sijaan laiskan evaluaation ansiosta Javan tyyliset \texttt{||}- ja \texttt{\&\&}-operaattorit on
 yksinkertaisesti toteutettu seuraavina kirjastofunktioina:
 
@@ -388,16 +390,16 @@ joilla on paluutyyppinä Template Haskell-kirjastossa määritelty syntaksipuuty
 
 Listauksessa \ref{lst:example-definition} määritellään makro \Haskell{compileTimeEval},
 jonka avulla voidaan tehdä laskutoimituksia käännösaikana.
-Huomattavaa on, että koko kyseinen moduuli on aivan standardia Haskell 2010-koodia,
+Huomattavaa on, että koko kyseinen moduuli on aivan standardia Haskell 2010-koodia
 ja että \Haskell{compileTimeEval} on vain tavallinen Haskell-funktio,
 jonka paluutyyppinä sattuu olemaan \Haskell{Q Exp}.
 
 Listauksessa \ref{lst:example-usage} esitellään \Haskell{compileTimeEval}-makron käyttöä,
-määrittelemällä nimet \Haskell{foo} ja \Haskell{bar} sen avulla.
+mää\-rit\-tele\-mäl\-lä nimet \Haskell{foo} ja \Haskell{bar} sen avulla.
 Makron käyttö tapahtuu dollarimerkkisyntaksilla \Haskell{\$(\emph{lauseke})},
 jossa \emph{lauseke} voi olla mielivaltaista Haskell-koodia.
 Koska dollarisyntaksi ja Template Haskell itsessään ei kuulu Haskell 2010-standardiin,
-on moduulin alkuun täytynyt laittaa pragma \Haskell{\{-\# LANGUAGE TemplateHaskell \#-\}}
+on moduulin alkuun täytynyt laittaa pragma \Haskell{LANGUAGE TemplateHaskell}
 Template Haskell-laajennoksen sallimiseksi.
 
 Kääntäessä \Haskell{Main.hs}-moduulia voidaan havaita,
@@ -408,54 +410,74 @@ koska makroekspansion aikana jaettiin nollalla.
 Siis \Haskell{\$()}-rakenteen sisällä oleva lauseke suoritetaan käännösaikana,
 ja sen paluuarvona oleva syntaksipuu (tyyppiä \Haskell{Q Exp}) liitetään käännettävän moduulin
 syntaksipuuhun.
-Template Haskellin moduuli \Haskell{Language.Haskell.TH.Syntax} tarjoaa tyypit \Haskell{Exp},
-joka vastaa Haskellin lausekkeen syntaksipuun tyyppiä,
-sekä tyypin \Haskell{Q},
-joka on \Haskell{IO}-tyyppiin verrattavissa oleva monadityyppi.
+
+Template Haskellin moduuli \Haskell{Language.Haskell.TH.Syntax} tarjoaa tyypin \Haskell{Exp},
+joka vastaa Haskellin lausekkeen syntaksipuun tyyppiä.
 Moduulista \Haskell{Language.Haskell.TH.Lib} löytyvät apufunktiot \Haskell{litE :: Lit -> Q Exp}
 sekä \Haskell{litE :: Integer -> Lit},
 joiden avulla luodaan kokonaislukuliteraalia vastaava syntaksipuun lehtisolmu.
+Tyypin \Haskell{Q Exp} edessä esiintyvä \Haskell{Q} viittaa Template Haskellin
+\emph{siteerausmonadiin} (quotation monad),
+jonka tarkemmat yksityiskohdat jätetään yksinkertaistuksen takia tässä huomiotta.
+Mainittavaa kuitenkin on,
+että \Haskell{Q}:n avulla voidaan makroekspansion aikana muun muassa päästä käsiksi kääntäjän symbolitauluun,
+jonka avulla voidaan esimerkiksi tarkastella mitä funktioita ja tyyppejä makron kutsukohdan näkyvyysalueelta
+löytyy. Näitä Template Haskellin tarjoamia keinoja ei tässä työssä kuitenkaan tutkita.
 
 \subsection{Syntaksipuu}
 Koska Template Haskell-makrojen pääasiallinen tavoite on tuottaa koodia syntaksipuun muodossa,
 on syntaksipuuta vastaavat Haskell-tietorakenteet erittäin keskeisessä osassa.
 Kyseiset tietotyypit löytyvät kirjastomoduulista \Haskell{Language.Haskell.TH.Syntax}.
+Listauksessa \ref{lst:syntax-tree-types} on annettu joidenkin tärkeiden tietotyyppien
+osittaiset määritelmät:
+\begin{itemize}
+    \item Tyyppi \Haskell{Exp} vastaa lausekkeen syntaksipuuta.
+    \item Tyyppi \Haskell{Pat} vastaa hahmonsovituksessa käytettävien hahmojen syntaksipuuta.
+    \item Tyyppi \Haskell{Lit} vastaa kielen vakioiden (literal) syntaksipuun tyyppiä
+\end{itemize}
 
-Tyyppi \Haskell{Exp} vastaa Haskell-lausekkeen syntaksipuuta.
-
+\begin{listing}[H]
 \begin{minted}{haskell}
+data Lit = CharL Char
+         | StringL String
+         | IntegerL Integer
+         | RationalL Rational
+
+data Pat
+  = LitP Lit            -- vakion hahmo: 'a', 42 jne.
+  | VarP Name           -- muuttujan hahmo: esim. x
+  | TupP [Pat]          -- monikon hahmo: esim. (p1, p2)
+  | ConP Name [Pat]     -- tyyppikonstruktorin hahmo: Ctor p1 p2
+  | WildP               -- wildcard-hahmo: _
+
 data Exp
-  = VarE Name                          -- viittaus arvon nimeen, esim. foo
-  | ConE Name                          -- viittaus tyyppikonstruktorin nimeen, esim. True
-  | LitE Lit                           -- vakio, esim. 'a', 42 tai "mjono"
-  | AppE Exp Exp                       -- funktiokutsu, esim. f x
+  = VarE Name           -- muuttujannimi: esim. foo
+  | ConE Name           -- tyyppikonstruktori: esim. True
+  | LitE Lit            -- vakio: esim. 'a', 42 tai "mjono"
+  | AppE Exp Exp        -- funktiokutsu: esim. f x
 
-  | InfixE (Maybe Exp) Exp (Maybe Exp) -- operaattorin kutsu tai osittainsovellus, esim:
-                                       -- a + b, (+b), (a+)
-
-  | UInfixE Exp Exp Exp                -- ???
-
-  | ParensE Exp                        -- lauseke suluissa, esim. (x)
-  | LamE [Pat] Exp                     -- lambdafunktio, \ p1 p2 -> e
-  | LamCaseE [Match]                   -- case m1; m2
-  | TupE [Exp]                         -- monikon muodostus, esim. (e1, e2)
-  | CondE Exp Exp Exp                  -- ehtolauseke, if e1 then e2 else e3
-  | LetE [Dec] Exp                     -- sitomislauseke let x=e1; y=e2 in e3
-  | CaseE Exp [Match]                  -- case-lauseke: case e of m1; m2
-  | DoE [Stmt]                         -- do-lauseke: do { p <- e1; e2 }
-  | CompE [Stmt]                       -- ei kasitella!!! @{ [ (x,y) | x <- xs, y <- ys ] }@
-
-  | ArithSeqE Range                    -- ei kasitella!!! @{ [ 1 ,2 .. 10 ] }@
-  | ListE [Exp]                        -- lista [e1, e2, e3]
-  | SigE Exp Type                      -- ei kasitella!!! @{ e :: t }@
-  | RecConE Name [FieldExp]            -- ei kasitella!!! @{ T { x = y, z = w } }@
-  | RecUpdE Exp [FieldExp]             -- ei kasitella!!! @{ (f x) { z = w } }@
-  deriving( Show, Eq, Data, Typeable )
+  | ParensE Exp         -- lauseke suluissa: esim. (e)
+  | LamE [Pat] Exp      -- anonyymi funktio: \ p1 p2 -> e
+  | TupE [Exp]          -- monikon muodostus: esim. (e1, e2)
+  | CondE Exp Exp Exp   -- ehtolauseke: if e1 then e2 else e3
+  | LetE [Dec] Exp      -- muuttujien maaritys: let x=e1; y=e2... in e3
+  | CaseE Exp [Match]   -- case-lauseke: case e of m1; m2
 \end{minted}
+\label{lst:syntax-tree-types}
+\caption{Joitakin Template Haskellin keskeisiä syntaksipuutietotyyppejä.}
+\end{listing}
+
+Merkillepantavaa on,
+että Haskellin algebralliset tietotyypit sopivat erinomaisesti syntaksipuutyypin esittämiseen!
+Esimerkiksi Javassa lausekkeen tietotyypin määrittely vastaavasti vaatisi ensin abstraktin yliluokan
+\Haskell{abstract class Exp} sekä kasan aliluokkia \Haskell{class VarE extends Exp},
+\Haskell{class ConE extends Exp} jne.
+Erityisesti tässä tilanteessa Haskell-koodi onnistuu olemaan huomattavasti tiiviimpää kuin vastaava Java-koodi.
 
 \subsection{\Haskell{zip$N$}-funktioiden generointi Template Haskellilla}
 
-Eräs Haskellissa yleisesti listojen käsittelyyn käytetty funktio \Haskell{zip :: [a] -> [b] -> [(a, b)]},
+Eräs Haskellissa yleisesti listojen käsittelyyn käytetty funktio on \Haskell{zip},
+tyypiltään \Haskell{zip :: [a] -> [b] -> [(a, b)]},
 joka ottaa parametrinä kaksi listaa,
 ja muodostaa niistä listan pareja.
 
@@ -482,20 +504,21 @@ zip4 :: [a] -> [b] -> [c] -> [d] -> [(a, b, c, d)]
 -- jne.
 \end{minted}
 
-Funktiot \Haskell{zip} ja \Haskell{zip3} voisi toteuttaa esim. seuraavasti:
+Funktiot \Haskell{zip} ja \Haskell{zip3} voisi toteuttaa esimerkiksi seuraavasti:
 
 \begin{minted}{haskell}
-zip l1 l2 = if any [null l1, null l2]
+zip l1 l2 = if or [null l1, null l2]
     then []
     else (head l1, head l2) : zip (tail l1) (tail l2)
 
-zip3 l1 l2 l3 = if any (==True) [null l1, null l2, null l3]
+zip3 l1 l2 l3 = if or [null l1, null l2, null l3]
     then []
     else (head l1, head l2, head l3) : zip3 (tail l1) (tail l2) (tail l3)
 \end{minted}
 
-\Haskell{any}-funktio tarkistaa päteekö ensimmäisenä parametrinä annettu predikaattifunktio jollekin toisena parametrina annetun listan alkiolle.
-\Haskell{null}-funktio kertoo onko parametrinä annettu lista tyhjä.
+\Haskell{or}-funktio \Haskell{or :: [Bool] -> Bool} tekee loogisen TAI-operaation parametrilistan
+jokaiselle alkiolle,
+tai toisin sanottuna tarkastaa, onko jokin listan alkio \Haskell{True}.
 Siis jos mikä tahansa parametrilistoista on tyhjä, niin \Haskell{zip$N$}-funktion paluuarvo on tyhjä lista,
 muulloin luodaan monikko jokaisen parametrilistan ensimmäisestä alkiosta,
 ja liitetään se rekursiivisesti tehtyyn \Haskell{zip$N$}-kutsuun loppulistoille.
@@ -509,3 +532,5 @@ jolla \Haskell{zip}-funktioiden luomisen voi automatisoida.
     \label{lst:make-zip}
     \caption{Mielivaltaisen \Haskell{zip$N$}-funktion generoiva Template Haskell-makro}
 \end{listing}
+
+\section{Yhteenveto}
