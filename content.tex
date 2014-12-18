@@ -506,6 +506,7 @@ zip4 :: [a] -> [b] -> [c] -> [d] -> [(a, b, c, d)]
 
 Funktiot \Haskell{zip} ja \Haskell{zip3} voisi toteuttaa esimerkiksi seuraavasti:
 
+\begin{listing}[H]
 \begin{minted}{haskell}
 zip l1 l2 = if or [null l1, null l2]
     then []
@@ -515,6 +516,9 @@ zip3 l1 l2 l3 = if or [null l1, null l2, null l3]
     then []
     else (head l1, head l2, head l3) : zip3 (tail l1) (tail l2) (tail l3)
 \end{minted}
+\label{lst:zip-impl}
+\caption{Esimerkkitoteutukset \Haskell{zip}- ja \Haskell{zip3}-funktioille.}
+\end{listing}
 
 \Haskell{or}-funktio \Haskell{or :: [Bool] -> Bool} tekee loogisen TAI-operaation parametrilistan
 jokaiselle alkiolle,
@@ -530,7 +534,65 @@ jolla \Haskell{zip}-funktioiden luomisen voi automatisoida.
 \begin{listing}[H]
     \inputminted{haskell}{codes/zip-generator/MakeZip.hs}
     \label{lst:make-zip}
-    \caption{Mielivaltaisen \Haskell{zip$N$}-funktion generoiva Template Haskell-makro}
+    \caption{Mielivaltaisen \Haskell{zip$N$}-funktion generoiva Template Haskell-makro.}
 \end{listing}
+
+Listauksessa \ref{lst:make-zip} määritellään makro \Haskell{makeZip},
+joka generoi koodin mielivaltaiselle \Haskell{zip}-funktiolle listauksessa \ref{lst:zip-impl}
+esitettyjen toteutuksen tyyliin.
+Funktio \Haskell{makeZip} on tyyppiä \Haskell{makeZip :: Int -> Q Dec}.
+Paluutyyppi on tässä tapauksessa eri kuin aiemmin nähty \Haskell{Q Exp},
+koska makron lopputuloksena ei ole lauseke,
+vaan kokonainen funktion määrittely.
+
+Itse makron toteutus koostuu kasasta apumäärittelyjä, joista tärkeimmät ovat:
+\begin{itemize}
+    \item \Haskell{functionName} on määriteltävän funktion nimi, tyyppiä \Haskell{Name}.
+          Template Haskellissa nimille on oma tietotyyppi \Haskell{Name},
+          joita voi luoda kirjastofunktiolla \Haskell{mkName :: String -> Name}.
+          Huomattavaa on erikoistapaus kun ariteetti on 2 -- tällöin funktion nimi on \Haskell{zip},
+          eikä \Haskell{zip2}.
+
+    \item \Haskell{argNames} on lista määriteltävän funktion parametrien nimistä, tyyppiä \Haskell{[Name]}.
+          Esimerkiksi \Haskell{zip3}:n tapauksessa parametrien nimet ovat \Haskell{l1}, \Haskell{l2} ja \Haskell{l3}.
+
+    \item \Haskell{body} on funktion runko: syntaksipuuliteraalin avulla muodostettu \Haskell{if}-lauseke,
+          johon on liitetty (splice) \Haskell{\$()}-notaation avulla seuraavan kolmen apumäärittelyn syntaksipuut.
+
+    \item \Haskell{isEmptyExprs} on rungon ehtolausekkeen ehdossa käytetty lausekkeen syntaksipuu,
+          joka vastaa \Haskell{zip3}:n tapauksessa listauksen \ref{lst:zip-impl} lauseketta \Haskell{[null l1, null l2, null l3]}.
+          Jokainen yksittäinen listan alkio (esimerkiksi \Haskell{null l1}) on luotu syntaksipuuliteraalia
+          ja spliceä käyttäen.
+          Kirjastofunktiolla \Haskell{varE :: Name -> Q Exp} muodostaa syntaksipuun lausekkeelle, joka
+          viittaa johonkin nimettyyn muuttujaan.
+          Kirjastofunktio \Haskell{listE :: [Q Exp] -> Q Exp} muodostaa syntaksipuun listaliteraalille.
+
+    \item \Haskell{tupleExpr} on paluuarvolistaan lisätyn monikon lausekkeen syntaksipuu,
+          joka vastaa \Haskell{zip3}:n tapauksessa listauksen \ref{lst:zip-impl} kohtaa \\ \Haskell{(head l1, head l2, head l3)}.
+          Kirjastofunktio \Haskell{tupE ::} \\ \Haskell{[Q Exp] -> Q Exp} muodostaa syntaksipuun monikkoliteraalille.
+
+    \item \Haskell{recursiveCallExpr} on rekursiivisen \Haskell{zip}-kutsun syntaksipuu,
+          joka vastaa \Haskell{zip3}:n tapauksessa listauksen \ref{lst:zip-impl} kohtaa \\ \Haskell{zip3 (tail l1) (tail l2) (tail l3)}.
+          Kirjastofunktio \Haskell{appsE ::} \\ \Haskell{[Q Exp] -> Exp} muodostaa syntaksipuun funktiokutsulle.
+          \Haskell{appsE}:lle parametrina annetun listan ensimmäinen alkio on lausekkeen syntaksipuu kutsuttavalle funktiolle,
+          ja listan loput alkiot ovat syntaksipuita funktiokutsun parametreille.
+\end{itemize}
+
+Lopuksi apumäärittely \Haskell{clauses} ja paluuarvo \Haskell{runQ (funD functionName clauses)} sitoo yhteen
+funktion nimen, parametrilistan sekä funktion rungon.
+Nyt \Haskell{makeZip}-makroa voi käyttää esimerkiksi seuraavasti:
+\begin{minted}{haskell}
+{-# LANGUAGE TemplateHaskell #-}
+import MakeZip(makeZip)
+
+$(mapM makeZip [4..20])
+main = print (zip6 [1] ['a'] ["b"] [4] [5] [6, 7])
+\end{minted}
+Rivillä \Haskell{\$(mapM makeZip [2..20])} suoritetaan \Haskell{makeZip}-makro arvoilla 2--20,
+ja seuraavalla rivillä kutsutaan testiksi \Haskell{zip6}-funktiota.
+Ohjelma tulostaa:
+\begin{minted}{haskell}
+[(1,'a',"b",4,5,6)]
+\end{minted}
 
 \section{Yhteenveto}
