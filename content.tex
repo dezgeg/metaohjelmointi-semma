@@ -413,6 +413,19 @@ Siis listauksen \ref{lst:operators-example} operaattoreita käyttäen olisi laus
 \Haskell{(1, 2) <+> 3 .* (4, 5)} tulkittavissa perinteisten matemaattisten operaattorien tapaan,
 eli \Haskell{(1, 2) <+> (3 .* (4, 5))}.
 
+Omien operaattoreiden määrittely on erityisen hyödyllinen täsmäkieliä toteuttaessa.
+Listauksessa \ref{lst:parsec} on lyhyt esimerkki laajasti käytetystä Parsec-kirjastosta,
+joka tarjoaa täsmäkielen jäsentäjien toteuttamiseen:
+\begin{listing}[H]
+    \inputminted{haskell}{codes/Parsec.hs}
+    \label{lst:parsec}
+    \caption{Esimerkki täsmäkielistä Haskellissa, Parsec-kirjastoa käyttäen}
+\end{listing}
+Esimerkissä \Haskell{javaIdentifier} ja \Haskell{javaInteger} ovat Parsec-kirjastolla toteutettuja \emph{jäsentäjiä},
+tyyppiä \Haskell{Parser}, joita voisi hyödyntää esimerkiksi Java-kääntäjää tehdessä.
+Jäsentäjiä muodostettaessa on käytetty \Haskell{<|>}- ja \Haskell{>>} -operaattoreita,
+joista ensimmäinen kuvaa kahden jäsentäjän leikkausta ja jälkimmäinen kahden jäsentäjän konkatenaatiota.
+
 \iffalse
 \subsection{Funktioiden lähempää tarkastelua}
 Kuten aiemmissa luvuissa on nähty,
