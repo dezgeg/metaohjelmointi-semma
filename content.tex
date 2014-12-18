@@ -474,6 +474,45 @@ Esimerkiksi Javassa lausekkeen tietotyypin määrittely vastaavasti vaatisi ensi
 \Haskell{class ConE extends Exp} jne.
 Erityisesti tässä tilanteessa Haskell-koodi onnistuu olemaan huomattavasti tiiviimpää kuin vastaava Java-koodi.
 
+\subsection{Syntaksipuuliteraalit}
+Jo varsin yksinkertaistenkin lausekkeiden syntaksipuut ovat varsin monimutkaisia ja ikäviä kirjoittaa.
+Otetaan esimerkiksi itseisarvofunktio kirjoitettuna anonyyminä funktiona:
+\begin{minted}{haskell}
+\x -> if x < 0 then -x else x
+\end{minted}
+Tämän lausekkeen syntaksipuun rakentamiseen vaadittava koodi on jotakuinkin seuraava:
+\begin{minted}{haskell}
+LamE [VarP (mkName "x")]
+     (CondE
+        (InfixE (Just (VarE (mkName "x")))
+                (VarE (mkName "<")
+                (Just (LitE (IntegerL 0))))
+        (AppE (VarE (mkName "negate")) (VarE (mkName "x")))
+        (VarE (mkName "x")))
+\end{minted}
+Makrojen kirjoittamista helpoittamaan tarjoaa Template Haskell literaalinotaation syntaksipuille;
+lausekkeen syntaksipuu voidaan kirjoittaa literaalina laittamalla \Haskell{[| |]}-sulkeet lausekkeen ympärille:
+\begin{minted}{haskell}
+[| \x -> if x < 0 then -x else x |]
+\end{minted}
+\Haskell{[| |]}-sulkeiden sisältävän lausekkeen muuttaminen sitä vastaavaksi syntaksipuutietorakenteeksi
+tapahtuu makron käännösaikana.
+
+Mikäli syntaksipuuliteraaliin halutaan lisätä esimerkiksi makron parametreistä riippuvia arvoja,
+voidaan \Haskell{[| |]}-sulkeiden sisällä käyttää edelleen \Haskell{\$()}-syntaksia eli spliceä.
+Esimerkiksi jos haluttaisiin luoda makrona ``parametrisoitu'' itseisarvofunktio,
+jossa parametriä ei verrata nollaan vaan johonkin makron parametrina annettuun lukuun,
+voitaisiin toteuttaa seuraavanlainen makro \Haskell{genParametrizedAbs}:
+\begin{minted}{haskell}
+genParametrizedAbs :: Integer -> Q Exp
+genParametrizedAbs cmp = [| \x -> if x < $(litE (integerL cmp))
+                                    then -x
+                                    else x |]
+\end{minted}
+\iffalse
+$ % fix Vim syntax highlight
+\fi
+
 \subsection{\Haskell{zip$N$}-funktioiden generointi Template Haskellilla}
 
 Eräs Haskellissa yleisesti listojen käsittelyyn käytetty funktio on \Haskell{zip},
@@ -588,6 +627,9 @@ import MakeZip(makeZip)
 $(mapM makeZip [4..20])
 main = print (zip6 [1] ['a'] ["b"] [4] [5] [6, 7])
 \end{minted}
+\iffalse
+$ % fix Vim syntax highlight
+\fi
 Rivillä \Haskell{\$(mapM makeZip [2..20])} suoritetaan \Haskell{makeZip}-makro arvoilla 2--20,
 ja seuraavalla rivillä kutsutaan testiksi \Haskell{zip6}-funktiota.
 Ohjelma tulostaa:
