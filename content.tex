@@ -243,6 +243,144 @@ crossProduct (x1, y1, z1) (x2, y2, z2) = (y1 * z2 - y2 * z1,
                                           x1 * y2 - x2 * y1)
 \end{minted}
 
+\subsection{Omien tietotyyppien määrittely}
+Haskellissa määriteltävät tietotyypit ovat nk. \emph{algebrallisia tietotyyppejä},
+joiden voidaan mieltää olevan Javan \texttt{enum}ien ja luokkien yhdistelmä.
+Tutkitaan ensiksi, miten kumpikin edellä mainittu Javan tarjoama tyyppiabstraktio
+voidaan kuvata Haskellissa,
+ja sitten vasta Haskellin algebralliset tietotyypit yleisesti.
+
+\subsubsection{Javan \Haskell{enum}in vastine}
+Tarkastellaan seuraavaa Javan \texttt{enum}-määrittelyä:
+\begin{minted}{java}
+enum Color {
+    Red, Green, Blue
+}
+\end{minted}
+Vastaava \texttt{enum} voidaan määritellä Haskellissa seuraavasti:
+\begin{minted}{haskell}
+data Color = Red | Green | Blue
+\end{minted}
+Edeltävä \texttt{data}-määrittely luo tyypin \texttt{Color} ja sille \emph{konstruktorit} \texttt{Red}, \texttt{Green} ja \texttt{Blue}.
+Konstruktoreihin voidaan viitata yksinkertaisesti konstruktorin nimellä:
+\begin{minted}{haskell}
+myFavouriteColor :: Color
+myFavouriteColor = Blue
+
+listOfAllColors :: [Color]
+listOfAllColors = [Red, Green, Blue]
+\end{minted}
+
+Konstruktoreita voidaan käyttää hahmonsovituksessa:
+\begin{minted}{haskell}
+toHex :: Color -> String
+toHex Red   = "#ff0000"
+toHex Green = "#00ff00"
+toHex Blue  = "#0000ff"
+\end{minted}
+
+Konstruktorin nimen täytyy alkaa isolla alkukirjaimella --
+hahmonsovituksessa kirjainkoko määrää sen, että viittaako nimi konstruktoriin
+vaiko paikalliseen muuttujaan johon hahmonsovituksen tulos sidotaan sen onnistuessa.
+
+\begin{minted}{haskell}
+myFavouriteColor :: Color
+myFavouriteColor = Blue
+
+isMyFavouriteColor :: Color -> Bool
+isMyFavouriteColor myFavouriteColor = True
+isMyFavouriteColor _ = False
+\end{minted}
+
+Siis edellä oleva \Haskell{isMyFavouriteColor} ei toimi nimensä mukaisesti,
+vaan palauttaa aina \Haskell{True} parametristä riippumatta!
+
+\subsubsection{Javan luokan vastine}
+Tarkastellaan seuraavaa \text{Person}-luokkaa, jolla on kentät \texttt{name} ja \texttt{age}:
+\begin{minted}{java}
+class Person {
+    public String name;
+    public int age;
+}
+\end{minted}
+Haskellissa vastaava tietotyyppi voidaan kenttien nimiä lukuunottamatta määritellä seuraavasti:
+\begin{minted}{haskell}
+data Person = Person String Integer
+\end{minted}
+Edeltävä \texttt{data}-määrittely tyypin \texttt{Person}, jolla on 2-parametrinen konstruktori \texttt{Person}.
+\texttt{Person}-konstruktorin voi mieltää olevan funktio tyyppiä \Haskell{String -> Integer -> Person}, jonka avulla luodaan \texttt{Person}-tyyppisiä arvoja:
+\begin{minted}{haskell}
+lisa = Person "Lisa Simpson" 8
+bart = Person "Bart Simpson" 10
+\end{minted}
+\texttt{Person}-tyyppisestä arvon kentät voi lukea hahmonsovittamalla \texttt{Person}-konstruktoria.
+Esimerkiksi Java-tyyliset getterit voisi määritellä näin:
+\begin{minted}{haskell}
+getName :: Person -> String
+getName (Person n _) = n
+
+getAge :: Person -> Integer
+getAge (Person _ age) = age
+
+bartsName = getName bart    -- "Bart Simpson"
+lisasAge = getAge lisa      -- 10
+\end{minted}
+
+\subsubsection{Javan \texttt{enum} ja luokat yhdessä $=$ algebralliset tietotyypit}
+Edellisissä aliluvuissa määriteltiin siis seuraavat Java-tyypit:
+\begin{minted}{java}
+enum Color {
+    Red, Green, Blue
+}
+class Person {
+    public String name;
+    public int age;
+}
+\end{minted}
+Joiden Haskell-vastineet olivat:
+\begin{minted}{haskell}
+data Color = Red | Green | Blue     -- enumin vastine
+data Person = Person String Integer -- luokan vastine
+\end{minted}
+Molemmissa Haskell-määrittelyissä käytettiin \Haskell{data}-avainsanaa,
+vaikka Javan näkökulmasta määriteltiin kaksi täysin erilaista tyyppiä.
+Näyttäisi vahvasti siltä, että Haskellissa nämä kaksi voisi jotenkin yhdistää tai yleistää.
+Tarkastellaan esimerkin vuoksi jokeripokeri-pelikorttipakasta löytyviä kortteja:
+\begin{itemize}
+    \item Kortti voi olla numerokortti (2-10), joka on jotakin maata (hertta, ruutu, risti tai pata).
+    \item Kortti voi olla kuvakortti (JQKA), jolla on myös maa.
+    \item Kortti voi olla jokeri, jolla ei ole maata.
+\end{itemize}
+Haskellissa yhden kortin voisi ilmaista seuraavasti:
+\begin{minted}{haskell}
+data Maa = Hertta | Ruutu | Risti | Pata
+data Kortti = Jokeri
+            | Kuvakortti   Maa Char
+            | Numerokortti Maa Integer
+\end{minted}
+Nyt \Haskell{Kortti}-tyypillä on konstruktorit \Haskell{Jokeri}, \Haskell{Kuvakortti} ja \Haskell{Numerokortti}.
+Sen käyttö (hahmonsovitus ja alkioiden luominen) toimii samalla lailla kuin aiemmin esitetyillä tyypeillä.
+\begin{minted}{haskell}
+pisteytaKortti :: Kortti -> Integer
+pisteytaKortti Jokeri = 1000
+pisteytaKortti (Numerokortti _ arvo) = arvo
+pisteytaKortti (Kuvakortti _ kirjain) = case kirjain of
+                                            'J' -> 11
+                                            'Q' -> 12
+                                            'K' -> 13
+                                            'A' -> 14
+
+pataAssa = Kuvakortti Pata 'A'
+ristiKakkonen = Numerokortti Risti 2
+main = do
+    print (pisteytaKortti pataAssa > pisteytaKortti ristiKakkonen)  -- 14 > 2, True
+    print (pisteytaKortti pataAssa > pisteytaKortti Jokeri)         -- 14 > 1000, False
+\end{minted}
+Tällaista \Haskell{enum}in ja luokan yhdistelmää kutsutaan algebralliseksi tietotyypiksi,
+joita Javasta ei siis löydy.
+Lähin vastine \Haskell{Kortti}-tyypille Javassa olisi abstrakti luokka \Haskell{Kortti},
+sekä \texttt{Kortti}-luokasta perivät aliluokat \texttt{Jokeri}, \texttt{Kuvakortti} ja \texttt{Numerokortti}.
+
 \subsection{Operaattorit}
 Haskellissa kaikkia nimettyjä funktioita voi vaihtoehtoisesti käyttää binäärioperaattorina ympäröimällä funktion nimi kenohipsuilla (\texttt{`}):
 \begin{minted}{haskell}
